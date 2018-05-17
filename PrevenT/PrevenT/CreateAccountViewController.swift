@@ -21,7 +21,7 @@ class CreateAccountViewController: UIViewController, UITextFieldDelegate {
     var keyboardIsShowing = false
     
     
-    override func viewWillAppear(animated: Bool) {
+    override func viewWillAppear(_ animated: Bool) {
         txtNombrePersona.delegate = self
         txtNombrePersona.tag = 0 //Increment accordingly
         
@@ -34,8 +34,8 @@ class CreateAccountViewController: UIViewController, UITextFieldDelegate {
         txtPasswordPersona2.delegate = self
         txtPasswordPersona2.tag = 3
         
-        NSNotificationCenter.defaultCenter().addObserver(self, selector: Selector("keyboardWillShow:"), name:UIKeyboardWillShowNotification, object: nil);
-        NSNotificationCenter.defaultCenter().addObserver(self, selector: Selector("keyboardWillHide:"), name:UIKeyboardWillHideNotification, object: nil);
+        NotificationCenter.default.addObserver(self, selector: Selector("keyboardWillShow:"), name:NSNotification.Name.UIKeyboardWillShow, object: nil);
+        NotificationCenter.default.addObserver(self, selector: Selector("keyboardWillHide:"), name:NSNotification.Name.UIKeyboardWillHide, object: nil);
 
     }
     
@@ -56,8 +56,8 @@ class CreateAccountViewController: UIViewController, UITextFieldDelegate {
     func textFieldShouldReturn(textField: UITextField) -> Bool {
         let nextTag: NSInteger = textField.tag + 1;
         // Try to find next responder
-        if let nextResponder: UIResponder! = textField.superview!.viewWithTag(nextTag){
-            nextResponder.becomeFirstResponder()
+        if let nextResponder: UIResponder? = textField.superview!.viewWithTag(nextTag){
+            nextResponder?.becomeFirstResponder()
         }
         else {
             // Not found, so remove keyboard.
@@ -77,7 +77,7 @@ class CreateAccountViewController: UIViewController, UITextFieldDelegate {
             return
         }
         
-        if(!StringUtils.isValidEmail(txtCorreoPersona.text!)){
+        if(!StringUtils.isValidEmail(testStr: txtCorreoPersona.text!)){
             self.view.makeToast(message: "El correo es incorrecto")
             return
         }
@@ -109,10 +109,12 @@ class CreateAccountViewController: UIViewController, UITextFieldDelegate {
         let alert: UIAlertView = UIAlertView();
         alert.message = "Creando cuenta, espere por favor";
         
-        let loadingIndicator: UIActivityIndicatorView = UIActivityIndicatorView(frame: CGRectMake(50, 10, 37, 37)) as UIActivityIndicatorView
+       
+        
+        let loadingIndicator: UIActivityIndicatorView = UIActivityIndicatorView(frame: CGRect(x:50, y:10, width:37, height:37)) as UIActivityIndicatorView
         loadingIndicator.center = self.view.center;
         loadingIndicator.hidesWhenStopped = true
-        loadingIndicator.activityIndicatorViewStyle = UIActivityIndicatorViewStyle.Gray
+        loadingIndicator.activityIndicatorViewStyle = UIActivityIndicatorViewStyle.gray
         loadingIndicator.startAnimating();
         
         alert.setValue(loadingIndicator, forKey: "accessoryView")
@@ -122,26 +124,27 @@ class CreateAccountViewController: UIViewController, UITextFieldDelegate {
         
         
         //---------- PROCESO ASINCRONO ---------------
-        let priority = DISPATCH_QUEUE_PRIORITY_DEFAULT
-        dispatch_async(dispatch_get_global_queue(priority, 0)) {
+        let priority = DispatchQueue.GlobalQueuePriority.default
+        
+        DispatchQueue.global(qos: .userInitiated).async() {
             
             let controller = Controller()
-            let res = controller.registarNuevoUsuario(self.txtNombrePersona.text!, txtCorreoPersona: self.txtCorreoPersona.text!, txtPasswordPersona: self.txtPasswordPersona.text!)
+            let res = controller.registarNuevoUsuario(txtNombrePersona:self.txtNombrePersona.text!, txtCorreoPersona: self.txtCorreoPersona.text!, txtPasswordPersona: self.txtPasswordPersona.text!)
             
             if(res.code == 1){
-                let resLogin = controller.login(self.txtCorreoPersona.text!, pass: self.txtPasswordPersona.text!);
+                let resLogin = controller.login(user:self.txtCorreoPersona.text!, pass: self.txtPasswordPersona.text!);
             }
             
             //Hilo principal
-            dispatch_async(dispatch_get_main_queue()) {
+            DispatchQueue.main.async() {
                 
                 //Quita la ventana de espera
-                alert.dismissWithClickedButtonIndex(-1, animated: true)
+                alert.dismiss(withClickedButtonIndex: -1, animated: true)
                 
                 if(res.code == 1){
                     //Si la creación del usuario es correcta hace el login
                     
-                    self.navigationController?.popToRootViewControllerAnimated(true)
+                    self.navigationController?.popToRootViewController(animated: true)
                     self.view.makeToast(message: "Cuenta creada correctamente");
                 }else {
                     self.view.makeToast(message: res.message!);
@@ -169,13 +172,14 @@ class CreateAccountViewController: UIViewController, UITextFieldDelegate {
     }
     
     
-    override func touchesBegan(touches: Set<UITouch>, withEvent event: UIEvent?) {
+    override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
         txtNombrePersona.resignFirstResponder()
         txtCorreoPersona.resignFirstResponder()
         txtPasswordPersona.resignFirstResponder()
         txtPasswordPersona2.resignFirstResponder()
     }
     
+
     
     func keyboardWillShow(sender: NSNotification) {
     

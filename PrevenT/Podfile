@@ -1,37 +1,23 @@
-=begin
-    Pod para agregar la funcionalidad de HTTP
-=end
+# platform :ios, '9.0'
+
+target 'PrevenT' do
+
 
  source 'https://github.com/CocoaPods/Specs.git'
-platform :ios, '8.0'
+
 use_frameworks!
 
-pod 'SwiftHTTP', '~> 1.0.0'
+#pod 'SwiftHTTP', '~> 3.0.1'
 
 
-=begin
-    Pod para agregar los mapas de GoogleMaps
-=end
 
 source 'https://github.com/CocoaPods/Specs.git'
-platform :ios, '8.1'
+platform :ios,'9.0'
 pod 'GoogleMaps'
-
-
-=begin
- Pod para agregar los mensajes push de Google
-=end
-
 pod 'Google/CloudMessaging'
+pod 'Alamofire', '~> 4.7'
+pod 'Alamofire-Synchronous', '~> 4.0'
+pod 'Spring', :git => 'https://github.com/MengTo/Spring.git'
+pod 'Kingfisher', '~> 4.0'
 
-
-=begin
- Pod para agregar Alamofire, libreria de comunicación HTTP
-=end
-
-pod 'Alamofire', '~> 3.4'
-
-=begin
- Pod para agregar al Alamofire, la posibilidad de hacer llamadas sincronas
-=end
-pod 'Alamofire-Synchronous', '~> 3.0'
+end

@@ -15,33 +15,33 @@ class WizardTipoDelitoViewController: UIViewController,UICollectionViewDelegate,
     let idDelitosList = [1,2,4,5,6,7,8,10,11,12]
     
     let delitosList:[String] = [
-        Controller.getDelitoStrByType(1),
-        Controller.getDelitoStrByType(2),
+        Controller.getDelitoStrByType(tipo: 1),
+        Controller.getDelitoStrByType(tipo: 2),
        // Controller.getDelitoStrByType(3),
-        Controller.getDelitoStrByType(4),
-        Controller.getDelitoStrByType(5),
-        Controller.getDelitoStrByType(6),
-        Controller.getDelitoStrByType(7),
-        Controller.getDelitoStrByType(8),
+        Controller.getDelitoStrByType(tipo: 4),
+        Controller.getDelitoStrByType(tipo: 5),
+        Controller.getDelitoStrByType(tipo: 6),
+        Controller.getDelitoStrByType(tipo: 7),
+        Controller.getDelitoStrByType(tipo: 8),
        // Controller.getDelitoStrByType(9),
-        Controller.getDelitoStrByType(10),
-        Controller.getDelitoStrByType(11),
-        Controller.getDelitoStrByType(12)
+        Controller.getDelitoStrByType(tipo: 10),
+        Controller.getDelitoStrByType(tipo: 11),
+        Controller.getDelitoStrByType(tipo: 12)
     ]
     
     let delitosImageList = [
-        Controller.getDelitoIco(1),
-        Controller.getDelitoIco(2),
+        Controller.getDelitoIco(tipo: 1),
+        Controller.getDelitoIco(tipo: 2),
         //Controller.getDelitoIco(3),
-        Controller.getDelitoIco(4),
-        Controller.getDelitoIco(5),
-        Controller.getDelitoIco(6),
-        Controller.getDelitoIco(7),
-        Controller.getDelitoIco(8),
+        Controller.getDelitoIco(tipo: 4),
+        Controller.getDelitoIco(tipo: 5),
+        Controller.getDelitoIco(tipo: 6),
+        Controller.getDelitoIco(tipo: 7),
+        Controller.getDelitoIco(tipo: 8),
         //Controller.getDelitoIco(9),
-        Controller.getDelitoIco(10),
-        Controller.getDelitoIco(11),
-        Controller.getDelitoIco(12)
+        Controller.getDelitoIco(tipo: 10),
+        Controller.getDelitoIco(tipo: 11),
+        Controller.getDelitoIco(tipo: 12)
     ]
     
     
@@ -71,12 +71,12 @@ class WizardTipoDelitoViewController: UIViewController,UICollectionViewDelegate,
     */
     
     
-    func collectionView(collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
             return self.delitosList.count
     }
     
-    func collectionView(collectionView: UICollectionView, cellForItemAtIndexPath indexPath: NSIndexPath) -> UICollectionViewCell {
-        let cell = collectionView.dequeueReusableCellWithReuseIdentifier("delitoCellSelector", forIndexPath: indexPath) as! DelitoSeleccionCollectionViewCell
+    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "delitoCellSelector", for: indexPath) as! DelitoSeleccionCollectionViewCell
         cell.text.text = delitosList[indexPath.row]
         cell.image.image = delitosImageList[indexPath.row]
         
@@ -91,8 +91,8 @@ class WizardTipoDelitoViewController: UIViewController,UICollectionViewDelegate,
         delitoReporteTO.id_tipo_delito = idDelitosList[indexPath.row]
         delitoReporteTO.id_num_delito = 1
         
-        let vc : AnyObject! = self.storyboard!.instantiateViewControllerWithIdentifier("WizardReportarBase")
-        self.showViewController(vc as! UIViewController, sender: vc)
+        let vc : AnyObject! = self.storyboard!.instantiateViewController(withIdentifier: "WizardReportarBase")
+        self.show(vc as! UIViewController, sender: vc)
     }
 
 

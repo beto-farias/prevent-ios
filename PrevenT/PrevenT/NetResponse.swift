@@ -19,7 +19,7 @@ class NetResponse{
     
     convenience init(dataString:String){
         do{
-            let myDictionary: NSDictionary = try NSJSONSerialization.JSONObjectWithData(dataString.dataUsingEncoding(NSUTF8StringEncoding)!, options: .AllowFragments) as! NSDictionary
+            let myDictionary: NSDictionary = try JSONSerialization.jsonObject(with: dataString.data(using: String.Encoding.utf8)!, options: .allowFragments) as! NSDictionary
             self.init(data: myDictionary);
         }catch let error{
             print("got an error creating the request: \(error)")
@@ -32,11 +32,11 @@ class NetResponse{
     init(dataDictionary: Dictionary<String,AnyObject>){
         
         if let id = (dataDictionary["id"]){
-            self.id = parseString2Int(id as! String);
+            self.id = parseString2Int(data: id as! String);
         }
         
         if let code = (dataDictionary["code"]){
-            self.code = parseString2Int(code as! String);
+            self.code = parseString2Int(data: code as! String);
         }
         
         if let message = (dataDictionary["message"]){
@@ -81,9 +81,9 @@ class NetResponse{
     /*
     * Parsea la respuesta en un NetResponse
     */
-    init(contentData:NSData){
+    init(contentData:Data){
         do{
-            let jsonData : AnyObject! = try NSJSONSerialization.JSONObjectWithData(contentData, options: NSJSONReadingOptions());
+            let jsonData : AnyObject! = try JSONSerialization.jsonObject(with: contentData, options: JSONSerialization.ReadingOptions()) as AnyObject;
             
             let jsonDictionary = jsonData as! NSDictionary;
             
@@ -110,14 +110,14 @@ class NetResponse{
     
     
     //Recupera el data como un arreglo de objetos JSon
-    func getDataJsonArray()->Array<NSDictionary>{
+    func getDataJsonArray()->Array<Dictionary<String, Any>>{
         do{
-            let data:NSData = self.data!.dataUsingEncoding(NSUTF8StringEncoding)!
-            let jsonData : AnyObject! = try NSJSONSerialization.JSONObjectWithData(data, options: NSJSONReadingOptions());
+            let data:Data = self.data!.data(using: String.Encoding.utf8)!
+            let jsonData : AnyObject! = try JSONSerialization.jsonObject(with: data, options: JSONSerialization.ReadingOptions()) as AnyObject;
             
             //Transforma la salida a un arreglo
             if let jsonArray = jsonData as? Array<NSDictionary>  {
-                return jsonArray;
+                return jsonArray as! Array<Dictionary<String, Any>>;
             }
             
         }catch{
@@ -135,7 +135,7 @@ class NetResponse{
         //print(key);
         if((data[key]) != nil){
             if let _ = data[key] as? String{
-                return parseString2Int(data[key] as! String)
+                return parseString2Int(data: data[key] as! String)
             }
         }
         return -1;

@@ -37,7 +37,6 @@ class Constantes{
     static let PREFS_TIPO_DELITO_: String = "PREFS_TIPO_DELITO_";
     
     static let PREFS_FIRST_TIME_RUN:String = "PREFS_FIRST_TIME_RUN";
-    /Users/beto/Documents/2gom/2016/Sercco/PrevenT/Workspace-ios/PrevenT/PrevenT/NetworkUtils.swift
     
     
     static let TIPO_DELITO_SECUESTRO:Int = 1;

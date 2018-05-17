@@ -35,7 +35,8 @@ class LeftDrawerViewController: UIViewController, UITableViewDataSource,UITableV
     }
     
     
-    override func viewWillAppear(animated: Bool) {
+    
+    override func viewWillAppear(_ animated: Bool) {
         updateUserNameGUI();
     }
     
@@ -51,16 +52,16 @@ class LeftDrawerViewController: UIViewController, UITableViewDataSource,UITableV
         let  controller:Controller = Controller();
         
         data = [
-            getLeftDrawerDelitoItem(LeftDrawerItem.MENU_CHECK_ROBO, tipoDelito: Constantes.TIPO_DELITO_ROBO),
-            getLeftDrawerDelitoItem(LeftDrawerItem.MENU_CHECK_HOMICIDIO, tipoDelito: Constantes.TIPO_DELITO_HOMICIDIO),
-            getLeftDrawerDelitoItem(LeftDrawerItem.MENU_CHECK_SEXUAL, tipoDelito: Constantes.TIPO_DELITO_SEXUAL),
-            getLeftDrawerDelitoItem(LeftDrawerItem.MENU_CHECK_ENFRENTAMIENTOS, tipoDelito: Constantes.TIPO_DELITO_ENFRENTAMIENTOS),
-            getLeftDrawerDelitoItem(LeftDrawerItem.MENU_CHECK_EXTORCION, tipoDelito: Constantes.TIPO_DELITO_EXTORCION),
-            getLeftDrawerDelitoItem(LeftDrawerItem.MENU_CHECK_PREVENCION, tipoDelito: Constantes.TIPO_DELITO_PREVENCION),
-            getLeftDrawerDelitoItem(LeftDrawerItem.MENU_CHECK_SECUESTRO, tipoDelito: Constantes.TIPO_DELITO_SECUESTRO),
-            getLeftDrawerDelitoItem(LeftDrawerItem.MENU_CHECK_SOCIALES, tipoDelito: Constantes.TIPO_DELITO_SOCIALES),
-            //getLeftDrawerDelitoItem(LeftDrawerItem.MENU_CHECK_MOVIMIENTOS_SOCIALES, tipoDelito: Constantes.TIPO_DELITO_MOVIMIENTOS_SOCIALES),
-            getLeftDrawerDelitoItem(LeftDrawerItem.MENU_CHECK_MERCADO_NEGRO, tipoDelito: Constantes.TIPO_DELITO_MERCADO_NEGRO),
+            getLeftDrawerDelitoItem(type: LeftDrawerItem.MENU_CHECK_ROBO, tipoDelito: Constantes.TIPO_DELITO_ROBO),
+            getLeftDrawerDelitoItem(type: LeftDrawerItem.MENU_CHECK_HOMICIDIO, tipoDelito: Constantes.TIPO_DELITO_HOMICIDIO),
+            getLeftDrawerDelitoItem(type: LeftDrawerItem.MENU_CHECK_SEXUAL, tipoDelito: Constantes.TIPO_DELITO_SEXUAL),
+            getLeftDrawerDelitoItem(type: LeftDrawerItem.MENU_CHECK_ENFRENTAMIENTOS, tipoDelito: Constantes.TIPO_DELITO_ENFRENTAMIENTOS),
+            getLeftDrawerDelitoItem(type: LeftDrawerItem.MENU_CHECK_EXTORCION, tipoDelito: Constantes.TIPO_DELITO_EXTORCION),
+            getLeftDrawerDelitoItem(type: LeftDrawerItem.MENU_CHECK_PREVENCION, tipoDelito: Constantes.TIPO_DELITO_PREVENCION),
+            getLeftDrawerDelitoItem(type: LeftDrawerItem.MENU_CHECK_SECUESTRO, tipoDelito: Constantes.TIPO_DELITO_SECUESTRO),
+            getLeftDrawerDelitoItem(type: LeftDrawerItem.MENU_CHECK_SOCIALES, tipoDelito: Constantes.TIPO_DELITO_SOCIALES),
+            //getLeftDrawerDelitoItem(type: LeftDrawerItem.MENU_CHECK_MOVIMIENTOS_SOCIALES, tipoDelito: Constantes.TIPO_DELITO_MOVIMIENTOS_SOCIALES),
+            getLeftDrawerDelitoItem(type: LeftDrawerItem.MENU_CHECK_MERCADO_NEGRO, tipoDelito: Constantes.TIPO_DELITO_MERCADO_NEGRO),
             
             
             //getLeftDrawerDelitoItem(LeftDrawerItem.MENU_CHECK_CIBERNETICO, tipoDelito: Constantes.TIPO_DELITO_CIBERNETICOS),
@@ -75,7 +76,7 @@ class LeftDrawerViewController: UIViewController, UITableViewDataSource,UITableV
             data.append(item);
         }else{
             let item = LeftDrawerItem(type: LeftDrawerItem.MENU_LOGIN,   hasSelectableItem: false, title: "Iniciar sesión");
-            data.insert(item, atIndex: 0);
+            data.insert(item, at: 0);
         }
         
         
@@ -87,9 +88,9 @@ class LeftDrawerViewController: UIViewController, UITableViewDataSource,UITableV
     
     func getLeftDrawerDelitoItem(type:Int, tipoDelito:Int) -> LeftDrawerItem{
         let  controller:Controller = Controller();
-        let delitoNombre:String = Controller.getDelitoStrByType(tipoDelito);
-        let isSelected:Bool = controller.isDelitoSelected(tipoDelito);
-        let delitoIcon:UIImage = Controller.getDelitoIco(tipoDelito);
+        let delitoNombre:String = Controller.getDelitoStrByType(tipo: tipoDelito);
+        let isSelected:Bool = controller.isDelitoSelected(idDelito: tipoDelito);
+        let delitoIcon:UIImage = Controller.getDelitoIco(tipo: tipoDelito);
         
         //Cuenta la cantidad de delitos seleccionados
         if(isSelected){
@@ -102,13 +103,13 @@ class LeftDrawerViewController: UIViewController, UITableViewDataSource,UITableV
     
     //------------------ INTERFACE DE TABLEVIEW ----------------------
     
-    func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int{
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int{
         return data.count;
     }
     
-    func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell{
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell{
         //let cell:UITableViewCell = UITableViewCell()
-        let cell:LeftDrawerTableViewCell   = tableView.dequeueReusableCellWithIdentifier("leftRowCell", forIndexPath: indexPath) as! LeftDrawerTableViewCell
+        let cell:LeftDrawerTableViewCell   = tableView.dequeueReusableCell(withIdentifier: "leftRowCell", for: indexPath) as! LeftDrawerTableViewCell
         
         let item:LeftDrawerItem = data[indexPath.row];
         
@@ -117,7 +118,7 @@ class LeftDrawerViewController: UIViewController, UITableViewDataSource,UITableV
         cell.txtMenuOpcion.text =  item.title;
         cell.sideMenuItemIcon.image = item.icon;
         if(item.hasSelectableItem){
-            cell.imgCheck.hidden = false;
+            cell.imgCheck.isHidden = false;
             
             if(item.selected){
                 cell.imgCheck.image = UIImage(named: "checkBox_checked");
@@ -125,7 +126,7 @@ class LeftDrawerViewController: UIViewController, UITableViewDataSource,UITableV
                 cell.imgCheck.image = UIImage(named: "checkBox_notChecked");
             }
         }else{
-            cell.imgCheck.hidden = true;
+            cell.imgCheck.isHidden = true;
         }
         
         return cell;
@@ -133,7 +134,7 @@ class LeftDrawerViewController: UIViewController, UITableViewDataSource,UITableV
     
     
     //Seleccion de una celda
-    func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         //print("Renglon seleccionado \(indexPath.item)");
         let controller : Controller  = Controller();
         
@@ -141,54 +142,54 @@ class LeftDrawerViewController: UIViewController, UITableViewDataSource,UITableV
         
         switch(item.type){
         case LeftDrawerItem.MENU_LOGIN:
-            let vc : AnyObject! = self.storyboard!.instantiateViewControllerWithIdentifier("LoginViewController")
-            self.showViewController(vc as! UIViewController, sender: vc)
+            let vc : AnyObject! = self.storyboard!.instantiateViewController(withIdentifier: "LoginViewController")
+            self.show(vc as! UIViewController, sender: vc)
             break;
         case LeftDrawerItem.MENU_HELP:
             controller.forceShowHelp();
-            navigationController?.popViewControllerAnimated(true);
+            navigationController?.popViewController(animated: true);
             break;
         case LeftDrawerItem.MENU_LOGOUT:
             
             controller.logoutUser()
             initLeftDrawerItems()
             updateUserNameGUI()
-            navigationController?.popToRootViewControllerAnimated(true)
+            navigationController?.popToRootViewController(animated: true)
             break;
         case LeftDrawerItem.MENU_CHECK_HOMICIDIO:
-            delitoClicked(item, idDelito: Constantes.TIPO_DELITO_HOMICIDIO);
+            delitoClicked(item: item, idDelito: Constantes.TIPO_DELITO_HOMICIDIO);
             break;
         case LeftDrawerItem.MENU_CHECK_DESAPARICONES:
-            delitoClicked(item, idDelito: Constantes.TIPO_DELITO_DESAPARICIONES);
+            delitoClicked(item: item, idDelito: Constantes.TIPO_DELITO_DESAPARICIONES);
             break;
         case LeftDrawerItem.MENU_CHECK_SECUESTRO:
-            delitoClicked(item, idDelito: Constantes.TIPO_DELITO_SECUESTRO);
+            delitoClicked(item: item, idDelito: Constantes.TIPO_DELITO_SECUESTRO);
             break;
         case LeftDrawerItem.MENU_CHECK_MOVIMIENTOS_SOCIALES:
-            delitoClicked(item, idDelito: Constantes.TIPO_DELITO_MOVIMIENTOS_SOCIALES);
+            delitoClicked(item: item, idDelito: Constantes.TIPO_DELITO_MOVIMIENTOS_SOCIALES);
             break;
         case LeftDrawerItem.MENU_CHECK_CIBERNETICO:
-            delitoClicked(item, idDelito: Constantes.TIPO_DELITO_CIBERNETICOS);
+            delitoClicked(item: item, idDelito: Constantes.TIPO_DELITO_CIBERNETICOS);
             break;
         case LeftDrawerItem.MENU_CHECK_ENFRENTAMIENTOS:
-            delitoClicked(item, idDelito: Constantes.TIPO_DELITO_ENFRENTAMIENTOS);
+            delitoClicked(item: item, idDelito: Constantes.TIPO_DELITO_ENFRENTAMIENTOS);
             break;
         case LeftDrawerItem.MENU_CHECK_EXTORCION:
-            delitoClicked(item, idDelito: Constantes.TIPO_DELITO_EXTORCION);
+            delitoClicked(item: item, idDelito: Constantes.TIPO_DELITO_EXTORCION);
             break;
         case LeftDrawerItem.MENU_CHECK_MERCADO_NEGRO:
-            delitoClicked(item, idDelito: Constantes.TIPO_DELITO_MERCADO_NEGRO);
+            delitoClicked(item: item, idDelito: Constantes.TIPO_DELITO_MERCADO_NEGRO);
             break;
         case LeftDrawerItem.MENU_CHECK_ROBO:
-            delitoClicked(item, idDelito: Constantes.TIPO_DELITO_ROBO);
+            delitoClicked(item: item, idDelito: Constantes.TIPO_DELITO_ROBO);
         case LeftDrawerItem.MENU_CHECK_SEXUAL:
-            delitoClicked(item, idDelito: Constantes.TIPO_DELITO_SEXUAL);
+            delitoClicked(item: item, idDelito: Constantes.TIPO_DELITO_SEXUAL);
             break;
         case LeftDrawerItem.MENU_CHECK_SOCIALES:
-            delitoClicked(item, idDelito: Constantes.TIPO_DELITO_SOCIALES);
+            delitoClicked(item: item, idDelito: Constantes.TIPO_DELITO_SOCIALES);
             break;
         case LeftDrawerItem.MENU_CHECK_PREVENCION:
-            delitoClicked(item, idDelito: Constantes.TIPO_DELITO_PREVENCION);
+            delitoClicked(item: item, idDelito: Constantes.TIPO_DELITO_PREVENCION);
             break;
             
         default:
@@ -219,7 +220,7 @@ class LeftDrawerViewController: UIViewController, UITableViewDataSource,UITableV
         
         if(item.selected){
             //Deseleccina el delito
-            controller.setDelitoSelected(idDelito, estado: false);
+            controller.setDelitoSelected(idDelito: idDelito, estado: false);
             cantidadDelitosSeleccionados -= 1;
             if(cantidadDelitosSeleccionados < 0){
                 cantidadDelitosSeleccionados = 0;
@@ -244,7 +245,7 @@ class LeftDrawerViewController: UIViewController, UITableViewDataSource,UITableV
                 puedeAgregar = true;
             }
             if(puedeAgregar){
-                controller.setDelitoSelected(idDelito, estado: true);
+                controller.setDelitoSelected(idDelito: idDelito, estado: true);
                 cantidadDelitosSeleccionados += 1;
                 item.selected = true;
             }else{

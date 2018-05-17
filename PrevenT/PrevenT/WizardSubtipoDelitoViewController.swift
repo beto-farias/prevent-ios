@@ -26,11 +26,11 @@ class WizardSubtipoDelitoViewController: UIViewController, UICollectionViewDataS
         collectionView.delegate = self
     }
     
-    override func viewWillAppear(animated: Bool) {
+    override func viewWillAppear(_ animated: Bool) {
         //Selecciona los subdelitos correspondientes
         
-        subDelitosHomicidioList = Controller.getSubDelitosById((delitoReporteTO.id_tipo_delito)!)
-        iconImage = Controller.getDelitoIco( delitoReporteTO.id_tipo_delito )
+        subDelitosHomicidioList = Controller.getSubDelitosById(idTipoDelito: (delitoReporteTO.id_tipo_delito)!)
+        iconImage = Controller.getDelitoIco( tipo: delitoReporteTO.id_tipo_delito )
     }
 
     override func didReceiveMemoryWarning() {
@@ -50,12 +50,12 @@ class WizardSubtipoDelitoViewController: UIViewController, UICollectionViewDataS
     */
     
     
-    func collectionView(collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         return self.subDelitosHomicidioList.count
     }
     
-    func collectionView(collectionView: UICollectionView, cellForItemAtIndexPath indexPath: NSIndexPath) -> UICollectionViewCell {
-        let cell = collectionView.dequeueReusableCellWithReuseIdentifier("delitoCellSelector", forIndexPath: indexPath) as! DelitoSeleccionCollectionViewCell
+    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "delitoCellSelector", for: indexPath) as! DelitoSeleccionCollectionViewCell
         cell.text.text = subDelitosHomicidioList[indexPath.row]
         //cell.image.image = delitosImageList[indexPath.row]
         cell.image.image = iconImage
@@ -67,8 +67,8 @@ class WizardSubtipoDelitoViewController: UIViewController, UICollectionViewDataS
         //Index path seleccionado
         //print("Elemento seleccionado \(indexPath.row)")
         
-        let vc : AnyObject! = self.storyboard!.instantiateViewControllerWithIdentifier("WizardReportarCompleto")
-        self.showViewController(vc as! UIViewController, sender: vc)
+        let vc : AnyObject! = self.storyboard!.instantiateViewController(withIdentifier: "WizardReportarCompleto")
+        self.show(vc as! UIViewController, sender: vc)
     }
 
 }

@@ -7,21 +7,22 @@
 //
 
 import UIKit
+import Spring
 
 class LoginViewController: UIViewController {
 
-    @IBOutlet weak var txtEmail: UITextField!
+    @IBOutlet weak var txtEmail: DesignableTextField!
     
-    @IBOutlet weak var txtPassword: UITextField!
+    @IBOutlet weak var txtPassword: DesignableTextField!
     
     
     var keyboardIsShowing = false
     
     
-    override func viewWillAppear(animated: Bool) {
+    override func viewWillAppear(_ animated: Bool) {
         
-        NSNotificationCenter.defaultCenter().addObserver(self, selector: Selector("keyboardWillShow:"), name:UIKeyboardWillShowNotification, object: nil);
-        NSNotificationCenter.defaultCenter().addObserver(self, selector: Selector("keyboardWillHide:"), name:UIKeyboardWillHideNotification, object: nil);
+        NotificationCenter.default.addObserver(self, selector:  #selector(LoginViewController.keyboardWillShow), name:NSNotification.Name.UIKeyboardWillShow, object: nil);
+        NotificationCenter.default.addObserver(self, selector: #selector(LoginViewController.keyboardWillHide), name:NSNotification.Name.UIKeyboardWillHide, object: nil);
         
     }
     
@@ -45,10 +46,10 @@ class LoginViewController: UIViewController {
         let alert: UIAlertView = UIAlertView();
         alert.message = "Espere por favor";
         
-        let loadingIndicator: UIActivityIndicatorView = UIActivityIndicatorView(frame: CGRectMake(50, 10, 37, 37)) as UIActivityIndicatorView
+        let loadingIndicator: UIActivityIndicatorView = UIActivityIndicatorView(frame: CGRect(x:50, y:10, width:37, height:37)) as UIActivityIndicatorView
         loadingIndicator.center = self.view.center;
         loadingIndicator.hidesWhenStopped = true
-        loadingIndicator.activityIndicatorViewStyle = UIActivityIndicatorViewStyle.Gray
+        loadingIndicator.activityIndicatorViewStyle = UIActivityIndicatorViewStyle.gray
         loadingIndicator.startAnimating();
         
         alert.setValue(loadingIndicator, forKey: "accessoryView")
@@ -58,38 +59,38 @@ class LoginViewController: UIViewController {
         
         
         //---------- PROCESO ASINCRONO ---------------
-        let priority = DISPATCH_QUEUE_PRIORITY_DEFAULT
-        dispatch_async(dispatch_get_global_queue(priority, 0)) {
+        DispatchQueue.main.async {
+           
             
             let controller = Controller()
-            let res = controller.login(self.txtEmail.text!, pass: self.txtPassword.text!)
+            let res = controller.login(user: self.txtEmail.text!, pass: self.txtPassword.text!)
             
             //Hilo principal
-            dispatch_async(dispatch_get_main_queue()) {
-                
-                alert.dismissWithClickedButtonIndex(-1, animated: true)
+            //DispatchQueue.main.sync {
+                alert.dismiss(withClickedButtonIndex: -1, animated: true)
                 if(res == 1){
-                    self.navigationController?.popToRootViewControllerAnimated(true)
+                    self.navigationController?.popToRootViewController(animated: true)
                 }else if(res == 0){
                     self.view.makeToast(message: "Usuario y/o contraseña incorrectos");
                 }else if(res == -1){
                     self.view.makeToast(message: "No hay conexión a internet");
                 }
                 
-            }
+           // }
         }//Termina proceso
     }//Termina metodo
     
-    override func touchesBegan(touches: Set<UITouch>, withEvent event: UIEvent?) {
+    
+    override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
         txtPassword.resignFirstResponder()
         txtEmail.resignFirstResponder()
     }
     
-    func keyboardWillShow(sender: NSNotification) {
-        
+    @objc func keyboardWillShow(sender: NSNotification) {
+        print("keybord show");
         if  !keyboardIsShowing {
             
-            if let keyboardSize = (sender.userInfo?[UIKeyboardFrameBeginUserInfoKey] as? NSValue)?.CGRectValue() {
+            if let keyboardSize = (sender.userInfo?[UIKeyboardFrameBeginUserInfoKey] as? NSValue)?.cgRectValue {
                 
                 self.view.frame.origin.y -= keyboardSize.height;
             }else{
@@ -100,7 +101,8 @@ class LoginViewController: UIViewController {
     }
 
     
-    func keyboardWillHide(sender: NSNotification) {
+    @objc func keyboardWillHide(sender: NSNotification) {
+        print("keybord hide");
         if  keyboardIsShowing {
             self.view.frame.origin.y = 0
             keyboardIsShowing = false

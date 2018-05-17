@@ -24,7 +24,7 @@ class UsuarioTO{
     init (text:String){
         
         
-        let jsonDictionary = StringUtils.convertStringToDictionary(text)
+        let jsonDictionary = StringUtils.convertStringToDictionary(text: text)
         
     
         

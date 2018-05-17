@@ -25,18 +25,18 @@ class IntroViewController: UIViewController, UIScrollViewDelegate {
         // Do any additional setup after loading the view.
         
         
-        self.scroll.frame = CGRectMake(0, 0, self.view.frame.width, self.view.frame.height)
+        self.scroll.frame = CGRect(x:0, y:0, width:self.view.frame.width, height:self.view.frame.height)
         let scrollViewWidth:CGFloat = self.scroll.frame.width
         let scrollViewHeight:CGFloat = self.scroll.frame.height
         
         
-        let imgOne = UIImageView(frame: CGRectMake(0, 0,scrollViewWidth, scrollViewHeight))
+        let imgOne = UIImageView(frame: CGRect(x:0, y:0,width:scrollViewWidth, height:scrollViewHeight))
         imgOne.image = UIImage(named: "Slide 1")
-        let imgTwo = UIImageView(frame: CGRectMake(scrollViewWidth, 0,scrollViewWidth, scrollViewHeight))
+        let imgTwo = UIImageView(frame: CGRect(x:scrollViewWidth, y:0,width:scrollViewWidth, height:scrollViewHeight))
         imgTwo.image = UIImage(named: "Slide 2")
-        let imgThree = UIImageView(frame: CGRectMake(scrollViewWidth*2, 0,scrollViewWidth, scrollViewHeight))
+        let imgThree = UIImageView(frame: CGRect(x:scrollViewWidth*2, y:0,width:scrollViewWidth, height:scrollViewHeight))
         imgThree.image = UIImage(named: "Slide 3")
-        let imgFour = UIImageView(frame: CGRectMake(scrollViewWidth*3, 0,scrollViewWidth, scrollViewHeight))
+        let imgFour = UIImageView(frame: CGRect(x:scrollViewWidth*3, y:0,width:scrollViewWidth, height:scrollViewHeight))
         imgFour.image = UIImage(named: "Slide 4")
         
         self.scroll.addSubview(imgOne)
@@ -44,17 +44,17 @@ class IntroViewController: UIViewController, UIScrollViewDelegate {
         self.scroll.addSubview(imgThree)
         self.scroll.addSubview(imgFour)
         
-        self.scroll.contentSize = CGSizeMake(self.scroll.frame.width * 4, self.scroll.frame.height)
+        self.scroll.contentSize = CGSize(width:self.scroll.frame.width * 4, height:self.scroll.frame.height)
         self.scroll.delegate = self
         self.pageControl.currentPage = 0
         
         //Oculta la barra de navegación
-        self.navigationController?.navigationBarHidden = true;
+        self.navigationController?.isNavigationBarHidden = true;
         
     }
     
-    override func viewWillAppear(animated: Bool) {
-        self.btnFinish.hidden = true;
+    override func viewWillAppear(_ animated: Bool) {
+        self.btnFinish.isHidden = true;
     }
 
     override func didReceiveMemoryWarning() {
@@ -75,13 +75,14 @@ class IntroViewController: UIViewController, UIScrollViewDelegate {
     
     
     
-    func scrollViewDidEndDecelerating(scrollView: UIScrollView){
+    func scrollViewDidEndDecelerating(_ scrollView: UIScrollView){
         
-        self.btnFinish.hidden = true;
+        self.btnFinish.isHidden = true;
 
         
         // Test the offset and calculate the current page after scrolling ends
-        let pageWidth:CGFloat = CGRectGetWidth(scrollView.frame)
+        let pageWidth:CGFloat = scrollView.frame.width
+        
         let currentPage:CGFloat = floor((scrollView.contentOffset.x-pageWidth/2)/pageWidth)+1
         // Change the indicator
         self.pageControl.currentPage = Int(currentPage);
@@ -96,8 +97,8 @@ class IntroViewController: UIViewController, UIScrollViewDelegate {
         }else{
             imagen.image = UIImage(named: "slide4");
             // Show the "Let's Start" button in the last slide (with a fade in animation)
-            UIView.animateWithDuration(1.0, animations: { () -> Void in
-                self.btnFinish.hidden = false;
+            UIView.animate(withDuration: 1.0, animations: { () -> Void in
+                self.btnFinish.isHidden = false;
             })
         }
     }

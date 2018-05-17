@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import Spring
 
 class AgregarDelitoViewController: UIViewController, UICollectionViewDelegate, UICollectionViewDataSource{
 
@@ -42,7 +43,7 @@ class AgregarDelitoViewController: UIViewController, UICollectionViewDelegate, U
     var delitoReporte : DelitoTO = DelitoTO() //Delito paa guardar los datos seleccionados
     
     let delitosList = ["Homicidio","Cibernetico","Extorción", "Desapariciones", "Robo", "Enfrentamientos","Sexual","Mercado Negro","Secuestro", "Movimientos Sociales"]
-    let delitosImageList = [Controller.getDelitoIco(1),Controller.getDelitoIco(9),Controller.getDelitoIco(6),Controller.getDelitoIco(3),Controller.getDelitoIco(4),Controller.getDelitoIco(8),Controller.getDelitoIco(5),Controller.getDelitoIco(7),Controller.getDelitoIco(1),Controller.getDelitoIco(10)]
+    let delitosImageList = [Controller.getDelitoIco(tipo: 1),Controller.getDelitoIco(tipo: 9),Controller.getDelitoIco(tipo: 6),Controller.getDelitoIco(tipo: 3),Controller.getDelitoIco(tipo: 4),Controller.getDelitoIco(tipo: 8),Controller.getDelitoIco(tipo: 5),Controller.getDelitoIco(tipo: 7),Controller.getDelitoIco(tipo: 1),Controller.getDelitoIco(tipo: 10)]
     
     
     let subDelitosHomicidioList = ["a","b","c"]
@@ -54,10 +55,10 @@ class AgregarDelitoViewController: UIViewController, UICollectionViewDelegate, U
         
         // Do any additional setup after loading the view.
         
-        reportarDelitoViewSelectMap.hidden = true;
+        reportarDelitoViewSelectMap.isHidden = true;
         
-        NSNotificationCenter.defaultCenter().addObserver(self, selector: Selector("keyboardWillShow:"), name:UIKeyboardWillShowNotification, object: nil);
-        NSNotificationCenter.defaultCenter().addObserver(self, selector: Selector("keyboardWillHide:"), name:UIKeyboardWillHideNotification, object: nil);
+        NotificationCenter.default.addObserver(self, selector: Selector("keyboardWillShow:"), name:NSNotification.Name.UIKeyboardWillShow, object: nil);
+        NotificationCenter.default.addObserver(self, selector: Selector("keyboardWillHide:"), name:NSNotification.Name.UIKeyboardWillHide, object: nil);
 
         
         hidePanels()
@@ -72,7 +73,7 @@ class AgregarDelitoViewController: UIViewController, UICollectionViewDelegate, U
     }
     
         
-    func collectionView(collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         switch(estadoWizard){
         case 1:
             return self.subDelitosHomicidioList.count
@@ -81,8 +82,8 @@ class AgregarDelitoViewController: UIViewController, UICollectionViewDelegate, U
         }
     }
     
-    func collectionView(collectionView: UICollectionView, cellForItemAtIndexPath indexPath: NSIndexPath) -> UICollectionViewCell {
-        let cell = collectionView.dequeueReusableCellWithReuseIdentifier("delitoCellSelector", forIndexPath: indexPath) as! DelitoSeleccionCollectionViewCell
+    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "delitoCellSelector", for: indexPath) as! DelitoSeleccionCollectionViewCell
         cell.text.text = delitosList[indexPath.row]
         cell.image.image = delitosImageList[indexPath.row]
         
@@ -99,10 +100,10 @@ class AgregarDelitoViewController: UIViewController, UICollectionViewDelegate, U
         
         switch(estadoWizard ){
         case 0:
-            delitoSeleccionadoAction(indexPath.row)
+            delitoSeleccionadoAction(index: indexPath.row)
             break
         case 1:
-            subDelitoSeleccionadoAction(indexPath.row)
+            subDelitoSeleccionadoAction(index: indexPath.row)
             break
         default:
             print ("Default collection view")
@@ -131,12 +132,12 @@ class AgregarDelitoViewController: UIViewController, UICollectionViewDelegate, U
     }
     
     func hidePanels(){
-        collectionViewDelitos.hidden = true;
-        viewReporte.hidden = true
-        addCriminalsView.hidden = true
-        addVictimsView.hidden   = true
-        collectionViewDelitoDetails.hidden = true
-        pickDateView.hidden = true
+        collectionViewDelitos.isHidden = true;
+        viewReporte.isHidden = true
+        addCriminalsView.isHidden = true
+        addVictimsView.isHidden   = true
+        collectionViewDelitoDetails.isHidden = true
+        pickDateView.isHidden = true
     }
     
     func updateGUIWizard(){
@@ -146,7 +147,7 @@ class AgregarDelitoViewController: UIViewController, UICollectionViewDelegate, U
         switch(estadoWizard){
         case 0:
             txtWizardTitle.text = "Tipo de delito"
-            collectionViewDelitos.hidden = false
+            collectionViewDelitos.isHidden = false
             break
         case 1:
             txtWizardTitle.text = "Subtipo de delito"
@@ -155,27 +156,27 @@ class AgregarDelitoViewController: UIViewController, UICollectionViewDelegate, U
         case 2:
             txtWizardTitle.text = "Relato del delito"
             hidePanels()
-            viewReporte.hidden = false
+            viewReporte.isHidden = false
             break
         case 3:
             txtWizardTitle.text = "Agregar Fotos"
             hidePanels()
-            viewReporte.hidden = false
+            viewReporte.isHidden = false
             break
         case 4:
             txtWizardTitle.text = "Cuanto criminales"
             hidePanels()
-            addCriminalsView.hidden = false
+            addCriminalsView.isHidden = false
             break
         case 5:
             txtWizardTitle.text = "Cuantas Victimas"
             hidePanels()
-            addVictimsView.hidden = false
+            addVictimsView.isHidden = false
             break
         case 5:
             txtWizardTitle.text = "Cambiar Fecha"
             hidePanels()
-            pickDateView.hidden = false
+            pickDateView.isHidden = false
             break
             
         default:
@@ -231,8 +232,8 @@ class AgregarDelitoViewController: UIViewController, UICollectionViewDelegate, U
         delitoReporte.id_tipo_sub_delito = index
     }
     
-
-    override func touchesBegan(touches: Set<UITouch>, withEvent event: UIEvent?) {
+    override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
+      
         txtDetalles.resignFirstResponder()  
     }
     

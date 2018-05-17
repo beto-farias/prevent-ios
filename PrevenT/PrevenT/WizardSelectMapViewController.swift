@@ -50,23 +50,25 @@ class WizardSelectMapViewController: UIViewController, CLLocationManagerDelegate
         
         //Posicion inicial de la camara México
         //let camera = GMSCameraPosition.cameraWithLatitude(23.364303,longitude: -111.5866852, zoom: zoomLevel);
-        let camera = GMSCameraPosition.cameraWithLatitude(latitud,longitude: longitud, zoom: zoomLevel);
+        let camera = GMSCameraPosition.camera(withLatitude: latitud,longitude: longitud, zoom: zoomLevel);
         
-        myMapView = GMSMapView.mapWithFrame(CGRectMake(0, 0,  self.view.bounds.width,self.view.bounds.height-42), camera:camera)
+        myMapView = GMSMapView.map(withFrame: CGRect(x:0, y:0,  width:self.view.bounds.width, height:self.view.bounds.height-42), camera:camera)
         
-        self.myMapView.animateToCameraPosition(camera);
+        self.myMapView.animate(to: camera);
         myMapView.delegate = self;
-        myMapView.myLocationEnabled = true
+        myMapView.isMyLocationEnabled = true
         myMapView.settings.myLocationButton = true;
         myMapView.settings.compassButton = true;
         
         
         //Agrega el mapa en el centro
         self.containerView.addSubview(myMapView);
+        
+        
     }
 
     
-    override func viewWillAppear(animated: Bool) {
+    override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         
         //Inicializa el delito
@@ -118,23 +120,26 @@ class WizardSelectMapViewController: UIViewController, CLLocationManagerDelegate
         //Espera unos segundos antes de hacer el segue
         let seconds = 0.5
         let delay = seconds * Double(NSEC_PER_SEC)  // nanoseconds per seconds
-        let dispatchTime = dispatch_time(DISPATCH_TIME_NOW, Int64(delay))
+//        let dispatchTime = dispatch_time(DISPATCH_TIME_NOW, Int64(delay))
         
-        dispatch_after(dispatchTime, dispatch_get_main_queue(), {
-            
-           self.performSegueWithIdentifier("puntoEvento2tipoEvento", sender: sender)
-            
-        })
+        
+        print("Comentado")
+        
+//        dispatch_after(dispatchTime, dispatch_get_main_queue(), {
+//
+//           self.performSegueWithIdentifier("puntoEvento2tipoEvento", sender: sender)
+//
+//        })
     }
     
     
     
-    override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         self.myMapView.clear();
         
         let center:CLLocationCoordinate2D = myMapView.camera.target;
         
-        reverseGeocodeCoordinate(center);
+        reverseGeocodeCoordinate(coordinate: center);
         
         let marker = GMSMarker()
         marker.position = center;

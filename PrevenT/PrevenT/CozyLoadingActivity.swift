@@ -28,7 +28,7 @@ struct CozyLoadingActivity {
         static var CLAFailColor = UIColor(red: 255/255, green: 75/255, blue: 56/255, alpha: 1.0)
         static var CLAWidthDivision: CGFloat {
             get {
-                if UIDevice.currentDevice().userInterfaceIdiom == UIUserInterfaceIdiom.Pad {
+                if UIDevice.current.userInterfaceIdiom == UIUserInterfaceIdiom.pad {
                     return  3.5
                 } else {
                     return 1.6
@@ -52,15 +52,15 @@ struct CozyLoadingActivity {
     }
     
     static func showWithDelay(text: String, disableUI: Bool, seconds: Double) -> Bool {
-        let showValue = show(text, disableUI: disableUI)
-        delay(seconds) { () -> () in
+        let showValue = show(text: text, disableUI: disableUI)
+        delay(seconds: seconds) { () -> () in
             hide(success: true, animated: false)
         }
         return showValue
     }
     
     /// Returns success status
-    static func hide(success success: Bool? = nil, animated: Bool = false) -> Bool {
+    static func hide( success: Bool? = nil, animated: Bool = false) -> Bool {
         guard instance != nil else {
             print("CozyLoadingActivity: You don't have an activity instance")
             return false
@@ -71,10 +71,10 @@ struct CozyLoadingActivity {
             return false
         }
         
-        if !NSThread.currentThread().isMainThread {
-            dispatch_async(dispatch_get_main_queue()) {
+        if !Thread.current.isMainThread {
+            DispatchQueue.main.async(execute: {
                 instance?.hideLoadingActivity(success: success, animated: animated)
-            }
+            });
         } else {
             instance?.hideLoadingActivity(success: success, animated: animated)
         }
@@ -83,9 +83,10 @@ struct CozyLoadingActivity {
     }
     
     private static func delay(seconds: Double, after: ()->()) {
-        let queue = dispatch_get_main_queue()
-        let time = dispatch_time(DISPATCH_TIME_NOW, Int64(seconds * Double(NSEC_PER_SEC)))
-        dispatch_after(time, queue, after)
+        let queue = DispatchQueue.main
+        //let time = DispatchTime.distantFuture(dispatch_time_t(DISPATCH_TIME_NOW), Int64(seconds * Double(NSEC_PER_SEC)))
+        let time:UInt64 =  UInt64(seconds * Double(NSEC_PER_SEC));
+        //dispatch_after(time, queue, after)
     }
     
     private class LoadingActivity: UIView {
@@ -105,7 +106,7 @@ struct CozyLoadingActivity {
             
             let yPosition = frame.height/2 - 20
             
-            activityView = UIActivityIndicatorView(activityIndicatorStyle: UIActivityIndicatorViewStyle.WhiteLarge)
+            activityView = UIActivityIndicatorView(activityIndicatorStyle: UIActivityIndicatorViewStyle.whiteLarge)
             activityView.frame = CGRect(x: 10, y: yPosition, width: 40, height: 40)
             activityView.color = Settings.CLAActivityColor
             activityView.startAnimating()
@@ -115,7 +116,7 @@ struct CozyLoadingActivity {
             textLabel.font = UIFont(name: Settings.CLAFontName, size: 30)
             textLabel.adjustsFontSizeToFitWidth = true
             textLabel.minimumScaleFactor = 0.25
-            textLabel.textAlignment = NSTextAlignment.Center
+            textLabel.textAlignment = NSTextAlignment.center
             textLabel.text = text
             
             addSubview(activityView)
@@ -124,34 +125,34 @@ struct CozyLoadingActivity {
             UIApplication.CLAtopMostController().view.addSubview(self)
             
             if disableUI {
-                UIApplication.sharedApplication().beginIgnoringInteractionEvents()
+                UIApplication.shared.beginIgnoringInteractionEvents()
                 UIDisabled = true
             }
         }
         
         func createShadow() {
-            layer.shadowPath = createShadowPath().CGPath
+            layer.shadowPath = createShadowPath().cgPath
             layer.masksToBounds = false
-            layer.shadowColor = UIColor.blackColor().CGColor
-            layer.shadowOffset = CGSizeMake(0, 0)
+            layer.shadowColor = UIColor.black.cgColor
+            layer.shadowOffset = CGSize(width:0, height:0)
             layer.shadowRadius = 5
             layer.shadowOpacity = 0.5
         }
         
         func createShadowPath() -> UIBezierPath {
             let myBezier = UIBezierPath()
-            myBezier.moveToPoint(CGPoint(x: -3, y: -3))
-            myBezier.addLineToPoint(CGPoint(x: frame.width + 3, y: -3))
-            myBezier.addLineToPoint(CGPoint(x: frame.width + 3, y: frame.height + 3))
-            myBezier.addLineToPoint(CGPoint(x: -3, y: frame.height + 3))
-            myBezier.closePath()
+            myBezier.move(to: CGPoint(x: -3, y: -3))
+            myBezier.addLine(to: CGPoint(x: frame.width + 3, y: -3))
+            myBezier.addLine(to: CGPoint(x: frame.width + 3, y: frame.height + 3))
+            myBezier.addLine(to: CGPoint(x: -3, y: frame.height + 3))
+            myBezier.close()
             return myBezier
         }
         
-        func hideLoadingActivity(success success: Bool?, animated: Bool) {
+        func hideLoadingActivity( success: Bool?, animated: Bool) {
             hidingInProgress = true
             if UIDisabled {
-                UIApplication.sharedApplication().endIgnoringInteractionEvents()
+                UIApplication.shared.endIgnoringInteractionEvents()
             }
             
             var animationDuration: Double = 0
@@ -165,10 +166,10 @@ struct CozyLoadingActivity {
             
             icon = UILabel(frame: CGRect(x: 10, y: frame.height/2 - 20, width: 40, height: 40))
             icon.font = UIFont(name: Settings.CLAFontName, size: 60)
-            icon.textAlignment = NSTextAlignment.Center
+            icon.textAlignment = NSTextAlignment.center
             
             if animated {
-                textLabel.fadeTransition(animationDuration)
+                textLabel.fadeTransition(duration: animationDuration)
             }
             
             if success != nil {
@@ -188,16 +189,16 @@ struct CozyLoadingActivity {
             if animated {
                 icon.alpha = 0
                 activityView.stopAnimating()
-                UIView.animateWithDuration(animationDuration, animations: {
+                UIView.animate(withDuration: animationDuration, animations: {
                     self.icon.alpha = 1
                     }, completion: { (value: Bool) in
-                        self.callSelectorAsync("removeFromSuperview", delay: animationDuration)
+                        self.callSelectorAsync(selector: "removeFromSuperview", delay: animationDuration)
                         instance = nil
                         hidingInProgress = false
                 })
             } else {
                 activityView.stopAnimating()
-                self.callSelectorAsync("removeFromSuperview", delay: animationDuration)
+                self.callSelectorAsync(selector: "removeFromSuperview", delay: animationDuration)
                 instance = nil
                 hidingInProgress = false
             }
@@ -212,39 +213,39 @@ private extension UIView {
         animation.timingFunction = CAMediaTimingFunction(name: kCAMediaTimingFunctionEaseInEaseOut)
         animation.type = kCATransitionFade
         animation.duration = duration
-        self.layer.addAnimation(animation, forKey: kCATransitionFade)
+        self.layer.add(animation, forKey: kCATransitionFade)
     }
 }
 
 private extension NSObject {
     /// Cozy extension
-    func callSelectorAsync(selector: Selector, delay: NSTimeInterval) {
-        let timer = NSTimer.scheduledTimerWithTimeInterval(delay, target: self, selector: selector, userInfo: nil, repeats: false)
-        NSRunLoop.mainRunLoop().addTimer(timer, forMode: NSRunLoopCommonModes)
+    func callSelectorAsync(selector: Selector, delay: TimeInterval) {
+        let timer = Timer.scheduledTimer(timeInterval: delay, target: self, selector: selector, userInfo: nil, repeats: false)
+        RunLoop.main.add(timer, forMode: RunLoopMode.commonModes)
     }
 }
 
 private extension UIScreen {
     class var CLAOrientation: UIInterfaceOrientation {
         get {
-            return UIApplication.sharedApplication().statusBarOrientation
+            return UIApplication.shared.statusBarOrientation
         }
     }
     class var CLAScreenWidth: CGFloat {
         get {
             if UIInterfaceOrientationIsPortrait(CLAOrientation) {
-                return UIScreen.mainScreen().bounds.size.width
+                return UIScreen.main.bounds.size.width
             } else {
-                return UIScreen.mainScreen().bounds.size.height
+                return UIScreen.main.bounds.size.height
             }
         }
     }
     class var CLAScreenHeight: CGFloat {
         get {
             if UIInterfaceOrientationIsPortrait(CLAOrientation) {
-                return UIScreen.mainScreen().bounds.size.height
+                return UIScreen.main.bounds.size.height
             } else {
-                return UIScreen.mainScreen().bounds.size.width
+                return UIScreen.main.bounds.size.width
             }
         }
     }
@@ -252,7 +253,7 @@ private extension UIScreen {
 
 extension UIApplication {
     class func CLAtopMostController() -> UIViewController {
-        let appDelegate  = UIApplication.sharedApplication().delegate as! AppDelegate
+        let appDelegate  = UIApplication.shared.delegate as! AppDelegate
         var topController = appDelegate.window!.rootViewController
         
         while topController?.presentedViewController != nil {

@@ -9,6 +9,8 @@
 import UIKit
 
 class GalleryViewController: UIViewController, UICollectionViewDataSource, UICollectionViewDelegate {
+    
+    
 
     //Este valor es enviado del home al controlador
     var multimedia:[MultimediaTO] = [];
@@ -29,18 +31,14 @@ class GalleryViewController: UIViewController, UICollectionViewDataSource, UICol
 
     //Implementacion del CollectionView
     
-    func collectionView(collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return self.multimedia.count
-    }
-    
-    func collectionView(collectionView: UICollectionView, cellForItemAtIndexPath indexPath: NSIndexPath) -> UICollectionViewCell {
-        let cell = collectionView.dequeueReusableCellWithReuseIdentifier("galleryCell", forIndexPath: indexPath) as! GalleryCollectionViewCell
+    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "galleryCell", for: indexPath) as! GalleryCollectionViewCell
         
         let mto = multimedia[indexPath.row]
         
         var newImgThumb : UIImageView
         newImgThumb = cell.galleryImage
-        newImgThumb.contentMode = .ScaleAspectFit
+        newImgThumb.contentMode = .scaleAspectFit
         
         //cell.galleryImage.image = data[indexPath.row]
         
@@ -48,26 +46,51 @@ class GalleryViewController: UIViewController, UICollectionViewDataSource, UICol
         
         let checkedUrl = "\(Controller.END_POINT_BASE)/multimedia/delitos/\(numDelito)\(idEvento)/\(mto.txt_archivo)";
         print(checkedUrl);
-            
-        cell.galleryImage.downloadedFrom(link: checkedUrl, contentMode: .ScaleAspectFit);
+        
+        cell.galleryImage.downloadedFrom(link: checkedUrl, contentMode: .scaleAspectFit);
         return cell
+        
     }
+    
+    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+        return self.multimedia.count
+    }
+    
+//    func collectionView(collectionView: UICollectionView, cellForItemAtIndexPath indexPath: NSIndexPath) -> UICollectionViewCell {
+//        let cell = collectionView.dequeueReusableCellWithReuseIdentifier("galleryCell", forIndexPath: indexPath) as! GalleryCollectionViewCell
+//        
+//        let mto = multimedia[indexPath.row]
+//        
+//        var newImgThumb : UIImageView
+//        newImgThumb = cell.galleryImage
+//        newImgThumb.contentMode = .ScaleAspectFit
+//        
+//        //cell.galleryImage.image = data[indexPath.row]
+//        
+//        
+//        
+//        let checkedUrl = "\(Controller.END_POINT_BASE)/multimedia/delitos/\(numDelito)\(idEvento)/\(mto.txt_archivo)";
+//        print(checkedUrl);
+//            
+//        cell.galleryImage.downloadedFrom(link: checkedUrl, contentMode: .ScaleAspectFit);
+//        return cell
+//    }
 }
 
 
 //http://stackoverflow.com/questions/24231680/loading-image-from-url
 extension UIImageView {
-    func downloadedFrom(link link:String, contentMode mode: UIViewContentMode) {
+    func downloadedFrom(link:String, contentMode mode: UIViewContentMode) {
         guard
-            let url = NSURL(string: link)
+            let url = URL(string: link)
             else {return}
         contentMode = mode
-        NSURLSession.sharedSession().dataTaskWithURL(url, completionHandler: { (data, _, error) -> Void in
+        URLSession.shared.dataTask(with: url, completionHandler: { (data, _, error) -> Void in
             guard
-                let data = data where error == nil,
+                let data = data, error == nil,
                 let image = UIImage(data: data)
                 else { return }
-            dispatch_async(dispatch_get_main_queue()) { () -> Void in
+            DispatchQueue.main.async() { () -> Void in
                 self.image = image
             }
         }).resume()

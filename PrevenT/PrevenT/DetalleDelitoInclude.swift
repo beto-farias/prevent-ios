@@ -18,7 +18,7 @@ class DetalleDelitoInclude :UIView{
     @IBOutlet weak var txtNumDelincuentes: UILabel!
     @IBOutlet weak var txtNumVictimas: UILabel!
     @IBOutlet weak var txtNumLikes: UILabel!
-    @IBOutlet weak var imgTipoDelito: DesignableImageView!
+    @IBOutlet weak var imgTipoDelito: UIImageView!
     @IBOutlet var txtNumMultimedia: UILabel!
     
     var idDelito:Int!;
@@ -36,7 +36,7 @@ class DetalleDelitoInclude :UIView{
         
         let controller:Controller = Controller();
         
-        let res = controller.addPoint(idDelito,numDelito: numDelito,vhNetResponse: likeActionCallback);
+        let res = controller.addPoint(idEvento: idDelito,numDelito: numDelito,vhNetResponse: likeActionCallback);
         if(res == -1){
             //Mostar toast de que no está logeado el usuario
             //print("El suaurio no esta logeado");
@@ -51,7 +51,7 @@ class DetalleDelitoInclude :UIView{
         
         switch(netRes.code!){
         case 1:
-            dispatch_async(dispatch_get_main_queue(), {
+            DispatchQueue.main.async(execute: {
                 self.numLike = self.numLike+1;
                 self.txtNumLikes.text = "\(self.numLike)";
             });

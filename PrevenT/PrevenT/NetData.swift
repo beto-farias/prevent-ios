@@ -30,11 +30,11 @@ enum MimeType: String {
 
 class NetData
 {
-    let data: NSData
+    let data: Data
     let mimeType: MimeType
     let filename: String
     
-    init(data: NSData, mimeType: MimeType, filename: String) {
+    init(data: Data, mimeType: MimeType, filename: String) {
         self.data = data
         self.mimeType = mimeType
         self.filename = filename

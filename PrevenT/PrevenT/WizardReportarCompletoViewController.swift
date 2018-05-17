@@ -22,7 +22,7 @@ class WizardReportarCompletoViewController: UIViewController {
     var numDelincuentes:Int = 0;
     var numVictimas:Int = 0;
     
-    var date:NSDate = NSDate();
+    var date:Date = Date();
     
     var keyboardIsShowing = false;
 
@@ -35,7 +35,7 @@ class WizardReportarCompletoViewController: UIViewController {
         txtVictimas.text = "\(numVictimas)";
         txtDelincuentes.text = "\(numDelincuentes)";
         
-        dateView.hidden = true;
+        dateView.isHidden = true;
         //Actualiza la fecha
         updateDate();
 
@@ -51,17 +51,17 @@ class WizardReportarCompletoViewController: UIViewController {
     }
     
 
-    override func viewWillAppear(animated: Bool) {
+    override func viewWillAppear(_ animated: Bool) {
         
-        NSNotificationCenter.defaultCenter().addObserver(self, selector: Selector("keyboardWillShow:"), name:UIKeyboardWillShowNotification, object: nil);
-        NSNotificationCenter.defaultCenter().addObserver(self, selector: Selector("keyboardWillHide:"), name:UIKeyboardWillHideNotification, object: nil);
+        NotificationCenter.default.addObserver(self, selector: Selector("keyboardWillShow:"), name:NSNotification.Name.UIKeyboardWillShow, object: nil);
+        NotificationCenter.default.addObserver(self, selector: Selector("keyboardWillHide:"), name:NSNotification.Name.UIKeyboardWillHide, object: nil);
         
     }
     
     
     //----------- MANEJO DEL TECLADO --------------
     
-    override func touchesBegan(touches: Set<UITouch>, withEvent event: UIEvent?) {
+    override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
         txtDescripcion.resignFirstResponder()
     }
     
@@ -82,9 +82,9 @@ class WizardReportarCompletoViewController: UIViewController {
     //-------------------
     
     func updateDate(){
-        let styler = NSDateFormatter()
+        let styler = DateFormatter()
         styler.dateFormat = "dd-MM-yyyy"
-        let dateString = styler.stringFromDate(date)
+        let dateString = styler.string(from: date)
         
         txtDate.text = dateString;
         
@@ -123,11 +123,11 @@ class WizardReportarCompletoViewController: UIViewController {
     
     
     @IBAction func showDateAction(sender: AnyObject) {
-        dateView.hidden = false;
+        dateView.isHidden = false;
     }
     
     @IBAction func aceptarDateAction(sender: AnyObject) {
-        dateView.hidden = true;
+        dateView.isHidden = true;
         date = datePicker.date;
         updateDate();
     }
@@ -157,10 +157,10 @@ class WizardReportarCompletoViewController: UIViewController {
         let alert: UIAlertView = UIAlertView();
         alert.message = "Espere por favor";
         
-        let loadingIndicator: UIActivityIndicatorView = UIActivityIndicatorView(frame: CGRectMake(50, 10, 37, 37)) as UIActivityIndicatorView
+        let loadingIndicator: UIActivityIndicatorView = UIActivityIndicatorView(frame: CGRect(x:50, y:10, width:37, height:37)) as UIActivityIndicatorView
         loadingIndicator.center = self.view.center;
         loadingIndicator.hidesWhenStopped = true
-        loadingIndicator.activityIndicatorViewStyle = UIActivityIndicatorViewStyle.Gray
+        loadingIndicator.activityIndicatorViewStyle = UIActivityIndicatorViewStyle.gray
         loadingIndicator.startAnimating();
         
         alert.setValue(loadingIndicator, forKey: "accessoryView")
@@ -170,26 +170,26 @@ class WizardReportarCompletoViewController: UIViewController {
         
         
         //---------- PROCESO ASINCRONO ---------------
-        let priority = DISPATCH_QUEUE_PRIORITY_DEFAULT
-        dispatch_async(dispatch_get_global_queue(priority, 0)) {
+        DispatchQueue.main.async(execute:
+        {
             
             let controller:Controller = Controller();
-            let netRes = controller.reporteDelito(delitoReporteTO);
+            let netRes = controller.reporteDelito(delito: delitoReporteTO);
             
             //Hilo principal
-            dispatch_async(dispatch_get_main_queue()) {
-                
-                alert.dismissWithClickedButtonIndex(-1, animated: true)
+            DispatchQueue.main.sync {
+            
+                alert.dismiss(withClickedButtonIndex: -1, animated: true)
                 let delito:DelitoTO = DelitoTO(dataString: netRes.data!);
                 
-                self.delitoSeleccionado2Show = controller.getDelitoDetails("\(delito.id_num_delito)", idDelito: "\(delito.id_evento)");
+                self.delitoSeleccionado2Show = controller.getDelitoDetails(numDelito: "\(delito.id_num_delito)", idDelito: "\(delito.id_evento)");
                 //Regresa al home usuando el hilo principal
                
                 self.view.makeToast(message: "Su reporte ha sido almacenado correctamente");
-                self.performSegueWithIdentifier("reportarDelito2Home", sender: self)
+                self.performSegue(withIdentifier: "reportarDelito2Home", sender: self)
                 
             }
-        }//Termina proceso
+        });//Termina proceso
 
     }//Termina método
     
@@ -200,12 +200,12 @@ class WizardReportarCompletoViewController: UIViewController {
         let delito:DelitoTO = DelitoTO(dataString: netRes.data!);
         
         let controller:Controller = Controller();
-        self.delitoSeleccionado2Show = controller.getDelitoDetails("\(delito.id_num_delito)", idDelito: "\(delito.id_evento)");
+        self.delitoSeleccionado2Show = controller.getDelitoDetails(numDelito: "\(delito.id_num_delito)", idDelito: "\(delito.id_evento)");
         
         //Regresa al home usuando el hilo principal
-        dispatch_async(dispatch_get_main_queue(), {
+        DispatchQueue.main.async(execute: {
             self.view.makeToast(message: "Su reporte ha sido almacenado correctamente");
-            self.performSegueWithIdentifier("reportarDelito2Home", sender: self)
+            self.performSegue(withIdentifier: "reportarDelito2Home", sender: self)
             
         });
         
@@ -217,19 +217,18 @@ class WizardReportarCompletoViewController: UIViewController {
 
 //--------------------------- SEGUES -----------------------
 
-
-
-override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
-    //print(segue.identifier);
-    if(segue.identifier == "reportarCompeto2SeleccionarFotografias"){
-        
-    }
     
-    if(segue.identifier == "reportarDelito2Home"){
-        let destino:ViewController = segue.destinationViewController as! ViewController;
-        destino.delitoDetalles = delitoSeleccionado2Show!;
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        //print(segue.identifier);
+        if(segue.identifier == "reportarCompeto2SeleccionarFotografias"){
+            
+        }
+        
+        if(segue.identifier == "reportarDelito2Home"){
+            let destino:ViewController = segue.destination as! ViewController;
+            destino.delitoDetalles = delitoSeleccionado2Show!;
+        }
     }
-}
 
 
 }

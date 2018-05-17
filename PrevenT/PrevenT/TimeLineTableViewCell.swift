@@ -14,7 +14,7 @@ class TimeLineTableViewCell: UITableViewCell {
     @IBOutlet var txtTitulo: UILabel!;
     @IBOutlet var txtFecha: UILabel!;
     @IBOutlet var txtNumLikes: UILabel!;
-    @IBOutlet var txtDireccion: DesignableLabel!
+    @IBOutlet var txtDireccion: UILabel!
     
 
     override func awakeFromNib() {
@@ -22,7 +22,7 @@ class TimeLineTableViewCell: UITableViewCell {
         // Initialization code
     }
 
-    override func setSelected(selected: Bool, animated: Bool) {
+    override func setSelected(_ selected: Bool, animated: Bool) {
         super.setSelected(selected, animated: animated)
 
         // Configure the view for the selected state

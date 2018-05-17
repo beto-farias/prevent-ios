@@ -33,19 +33,19 @@ class PhotoManagerViewController: UIViewController, UICollectionViewDelegate,UIC
     }
     
 
-    override func viewWillAppear(animated: Bool) {
+    override func viewWillAppear(_ animated: Bool) {
         if( delitoReporteTO.logoImages.count > 0 ){
-            txtNoHayImagen.hidden = true;
+            txtNoHayImagen.isHidden = true;
         }
     }
     
-    func collectionView(collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         //print("Size \(delitoReporteTO.logoImages.count)")
         return delitoReporteTO.logoImages.count;
     }
     
-    func collectionView(collectionView: UICollectionView, cellForItemAtIndexPath indexPath: NSIndexPath) -> UICollectionViewCell {
-        let cell = collectionView.dequeueReusableCellWithReuseIdentifier("pictureCellSelector", forIndexPath: indexPath) as! PhotoGaleryCollectionViewCell
+    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "pictureCellSelector", for: indexPath) as! PhotoGaleryCollectionViewCell
         
         cell.imgThumnail.image = delitoReporteTO.logoImages[indexPath.row]
         
@@ -60,21 +60,21 @@ class PhotoManagerViewController: UIViewController, UICollectionViewDelegate,UIC
 
     
     @IBAction func addPictureAction(sender: AnyObject) {
-        if UIImagePickerController.isSourceTypeAvailable(UIImagePickerControllerSourceType.SavedPhotosAlbum){
+        if UIImagePickerController.isSourceTypeAvailable(UIImagePickerControllerSourceType.savedPhotosAlbum){
             //print("Button capture")
             
             
             imagePicker.delegate = self
-            imagePicker.sourceType = UIImagePickerControllerSourceType.SavedPhotosAlbum;
+            imagePicker.sourceType = UIImagePickerControllerSourceType.savedPhotosAlbum;
             imagePicker.allowsEditing = false
             
-            self.presentViewController(imagePicker, animated: true, completion: nil)
+            self.present(imagePicker, animated: true, completion: nil)
         }
     }
     
     
     func imagePickerController(picker: UIImagePickerController!, didFinishPickingImage image: UIImage!, editingInfo: NSDictionary!){
-        self.dismissViewControllerAnimated(true, completion: { () -> Void in
+        self.dismiss(animated: true, completion: { () -> Void in
             
         })
         

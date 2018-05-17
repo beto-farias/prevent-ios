@@ -33,13 +33,13 @@ class Controller{
     //Handlers de peticiones
     var viewHandler:(Bool)->Void = {(arg:Bool) -> Void in}
     var viewHandlerDeltosArray:([DelitoTO])->Void = {(arg:[DelitoTO]) -> Void in}
-    var viewHandlerNetResponse:(NetResponse->Void) = {(arg:NetResponse) -> Void in} //handlers para NetResponse
+    var viewHandlerNetResponse:((NetResponse)->Void) = {(arg:NetResponse) -> Void in} //handlers para NetResponse
     
     
     
     //MARK:: Delitos -----------------
     
-    func getDelitosByTipo(idTipo: Int, tiempoDias: Int , lat: Double, lon : Double, viewHandlerDelitos:([DelitoTO])->Void){
+    func getDelitosByTipo(idTipo: Int, tiempoDias: Int , lat: Double, lon : Double, viewHandlerDelitos:@escaping ([DelitoTO])->Void){
         viewHandlerDeltosArray = viewHandlerDelitos //Handler para la respuesta
         
         let url = "\(END_POINT)\(END_POINT_DELITO_BY_TIPO)tipoDelito/\(idTipo)/idUsuario/\(getUserId())/time/\(tiempoDias)/lat/\(lat)/lon/\(lon)";
@@ -47,7 +47,7 @@ class Controller{
         //print("getDelitosByTipo \(url)")
         
         let net = NetworkUtils();
-        net.doGetJsonAsync(url, handler:getDelitosByTipoCallback)
+        net.doGetJsonAsync(url:url, handler:getDelitosByTipoCallback)
     }
     
     
@@ -61,12 +61,12 @@ class Controller{
         //print("getDelitosByTipo \(url)")
         
         let net = NetworkUtils();
-        let contentData:NSData = net.doGetJsonNSData(url)!;
+        let contentData:NSData = net.doGetJsonNSData(url: url)!;
         
          let delitosList = [DelitoTO]();
         
         do{
-            let jsonData : AnyObject! = try NSJSONSerialization.JSONObjectWithData(contentData, options: NSJSONReadingOptions());
+            let jsonData : AnyObject! = try JSONSerialization.jsonObject(with: contentData as Data, options: JSONSerialization.ReadingOptions()) as AnyObject;
             
             //Transforma la salida a un arreglo
             if let jsonArray = jsonData as? Array<AnyObject>  {
@@ -89,9 +89,9 @@ class Controller{
     
     
     //Callback de carga de delitos
-    func getDelitosByTipoCallback(contentData:NSData){
+    func getDelitosByTipoCallback(contentData:Data){
         do{
-            let jsonData : AnyObject! = try NSJSONSerialization.JSONObjectWithData(contentData, options: NSJSONReadingOptions());
+            let jsonData : AnyObject! = try JSONSerialization.jsonObject(with: contentData as Data, options: JSONSerialization.ReadingOptions()) as AnyObject;
             
             //Transforma la salida a un arreglo
             if let jsonArray = jsonData as? Array<AnyObject>  {
@@ -113,7 +113,7 @@ class Controller{
     
     
     func getDelitoDetails(numDelito:Int, idDelito:Int)->DelitoTO{
-        return getDelitoDetails( "\(numDelito)", idDelito: "\(idDelito)");
+        return getDelitoDetails( numDelito:"\(numDelito)", idDelito: "\(idDelito)");
     }
     
     //Recupera el detalle de un delito especifico, de manera sincrona
@@ -122,7 +122,7 @@ class Controller{
         let url: String = "\(END_POINT)\(END_POINT_DETALLE_DELITO)idNumDelito/\(numDelito)/idEvento/\(idDelito)";
         //print(url);
         let net = NetworkUtils();
-        let jsonData:NSDictionary = net.doGetJsonString(url);
+        let jsonData:NSDictionary = net.doGetJsonString(urlString: url);
         let delito = DelitoTO(data: jsonData);
        
         return delito;
@@ -138,7 +138,7 @@ class Controller{
         print(url);
         
         let net = NetworkUtils();
-        let dataJson = net.doGetJsonStringArray(url);
+        let dataJson = net.doGetJsonStringArray(urlString: url);
         
         
         var delitosList = [DelitoTO]();
@@ -169,7 +169,7 @@ class Controller{
         
         //Llamada a crear usuario con callback
         //net.doPostJsonAsync(url, params: params, handler: self.registraUsarioHandler)
-        let netRes = net.doPostJsonSyncParams(url, params: params);
+        let netRes = net.doPostJsonSyncParams(url: url, params: params);
         return netRes;
     }
     
@@ -184,14 +184,14 @@ class Controller{
         
         if(netRes.code == 1){
             //print(netRes.data);
-            let dataString = netRes.data!.stringByReplacingOccurrencesOfString(" ", withString: "+")
+            let dataString = netRes.data!.replacingOccurrences(of:" ", with: "+")
             //print (dataString)
             
             let usuarioTO: UsuarioTO = UsuarioTO.init(text:dataString);
             
             
             //print("Usuario creado y logeado correctamente ")
-            saveUsuarioLocal(usuarioTO, tipoLogin: 1)
+            saveUsuarioLocal(usuario: usuarioTO, tipoLogin: 1)
             
             viewHandler(true)
         }else{
@@ -205,7 +205,7 @@ class Controller{
     /**
     * Método que agrega un like al delito
     */
-    func addPoint( idEvento:Int, numDelito:Int,vhNetResponse:(NetResponse->Void) ) ->Int {
+    func addPoint( idEvento:Int, numDelito:Int,vhNetResponse:@escaping ((NetResponse)->Void) ) ->Int {
         self.viewHandlerNetResponse = vhNetResponse;
     
         let idUser =  getUserId();
@@ -223,7 +223,7 @@ class Controller{
         let net = NetworkUtils();
         
         //Llamada a like con callback
-        net.doPostJsonAsync(url, params: params, handler: self.addPointHandler);
+        net.doPostJsonAsync(url: url, params: params, handler: self.addPointHandler);
         return 0;
     }
     
@@ -286,7 +286,7 @@ class Controller{
         }
         
         //Llamada a publicar reporte corto con callback
-        let netRes:NetResponse = net.doPostJsonSyncParams(url,params:params);
+        let netRes:NetResponse = net.doPostJsonSyncParams(url: url,params:params);
         print("NetRes: \(netRes)")
         
         if(netRes.code == 1){
@@ -294,7 +294,7 @@ class Controller{
             
             //print(images.count);
             
-            reporteDelitoImagen(images ,idNumDelito: delitoRes.id_num_delito,idEvento: delitoRes.id_evento);
+            reporteDelitoImagen(images: images ,idNumDelito: delitoRes.id_num_delito,idEvento: delitoRes.id_evento);
         }
         return netRes;
     }
@@ -307,81 +307,37 @@ class Controller{
         
         
         for image in images {
-            //let myThumb1:UIImage = image.resize(0.3)
-            
-            //let imageData = UIImagePNGRepresentation(myThumb1)
-            //let  base64String:String = imageData!.base64EncodedStringWithOptions(.Encoding64CharacterLineLength)
-            //EncodingEndLineWithLineFeed
-            //let  base64String:String = imageData!.base64EncodedStringWithOptions(.EncodingEndLineWithLineFeed)
-            //let  base64String:String = imageData!.base64EncodedStringWithOptions(.EncodingEndLineWithCarriageReturn)
-            
-            //print(base64String)
-            
-            
-            
-            //let net = NetworkUtils();
-            //let url = "\(END_POINT)\(END_POINT_ADD_DELITO_MULTIMEDIA)";
             let url = "\(END_POINT)saveMultimediaMultiPart";
             
             print(url);
-            let image : NSData = UIImageJPEGRepresentation(image, 0.3)!
-            
-            /*
-            let params = [
-                "idNumDelito": "\(idNumDelito)",
-                "idEvento": "\(idEvento)",
-                "idTipoMultimedia": "1", //1 es imagen
-                "txtBase64": base64String
-            ];
-            */
-            
-            
-            
+            let image : Data = UIImageJPEGRepresentation(image, 0.3)!
+       
             let params = [
                 "idNumDelito": "\(idNumDelito)",
                 "idEvento": "\(idEvento)",
                 "idTipoMultimedia": "1", //1 es imagen
                 "txtBase64": "base64String",
                 "file_upload": NetData(data: image, mimeType: .ImageJpeg, filename: "customName.jpg"),
-            ];
+                ] as [String : Any];
  
             
             
-            let urlRequest = self.urlRequestWithComponents(url, parameters: params)
             
-            let response = Alamofire.upload(urlRequest.0, data: urlRequest.1)
+            print("FALTA SUBIR LA IMAGEN");
+            
+            //let urlRequest = self.urlRequestWithComponents(urlString: url, parameters: params)
+            
+            
+            /*
+            
+            //let response = Alamofire.upload(urlRequest.0, data: urlRequest.1)
+            let response = Alamofire.upload(data:params, to: url).response { response in // method defaults to `.post`
                 .progress { (bytesWritten, totalBytesWritten, totalBytesExpectedToWrite) in
                     print("\(totalBytesWritten) / \(totalBytesExpectedToWrite)")
                 }
                 .responseString()
-            
-            
             print("Response: \(response)")
-            
-            
-            
-            
-            //let netRes:NetResponse = net.doPostJsonSyncParams(url, params: params);
-            
-            //json
-            //let response = Alamofire.request(.POST, url, parameters: params).responseString()
-                
-            
-            //print("Response: \(response)")
-            
-           /*
-            print(response.request)  // original URL request
-            print(response.response) // URL response
-            print(response.data)     // server data
-            print(response.result)   // result of response serialization
-                
-            if let JSON = response.result.value {
-                print("JSON: \(JSON)")
-            }
             */
-            
-            //print("NetRes: \(netRes)")
-            
         }
     }
     
@@ -389,57 +345,58 @@ class Controller{
     
     //this function to help upload photo
     
-    func urlRequestWithComponents(urlString:String, parameters:NSDictionary) -> (URLRequestConvertible, NSData) {
-        
-        // create url request to send
-        let mutableURLRequest = NSMutableURLRequest(URL: NSURL(string: urlString)!)
-        mutableURLRequest.HTTPMethod = Alamofire.Method.POST.rawValue
-        //let boundaryConstant = "myRandomBoundary12345"
-        let boundaryConstant = "NET-POST-boundary-\(arc4random())-\(arc4random())"
-        let contentType = "multipart/form-data;boundary="+boundaryConstant
-        mutableURLRequest.setValue(contentType, forHTTPHeaderField: "Content-Type")
-        
-        
-        // create upload data to send
-        let uploadData = NSMutableData()
-        
-        // add parameters
-        for (key, value) in parameters {
-            
-            uploadData.appendData("\r\n--\(boundaryConstant)\r\n".dataUsingEncoding(NSUTF8StringEncoding)!)
-            
-            if value is NetData {
-                // add image
-                let postData = value as! NetData
-                
-                
-                //uploadData.appendData("Content-Disposition: form-data; name=\"\(key)\"; filename=\"\(postData.filename)\"\r\n".dataUsingEncoding(NSUTF8StringEncoding)!)
-                
-                // append content disposition
-                let filenameClause = " filename=\"\(postData.filename)\""
-                let contentDispositionString = "Content-Disposition: form-data; name=\"\(key)\";\(filenameClause)\r\n"
-                let contentDispositionData = contentDispositionString.dataUsingEncoding(NSUTF8StringEncoding)
-                uploadData.appendData(contentDispositionData!)
-                
-                
-                // append content type
-                //uploadData.appendData("Content-Type: image/png\r\n\r\n".dataUsingEncoding(NSUTF8StringEncoding)!) // mark this.
-                let contentTypeString = "Content-Type: \(postData.mimeType.getString())\r\n\r\n"
-                let contentTypeData = contentTypeString.dataUsingEncoding(NSUTF8StringEncoding)
-                uploadData.appendData(contentTypeData!)
-                uploadData.appendData(postData.data)
-                
-            }else{
-                uploadData.appendData("Content-Disposition: form-data; name=\"\(key)\"\r\n\r\n\(value)".dataUsingEncoding(NSUTF8StringEncoding)!)
-            }
-        }
-        uploadData.appendData("\r\n--\(boundaryConstant)--\r\n".dataUsingEncoding(NSUTF8StringEncoding)!)
-        
-        
-        
-        // return URLRequestConvertible and NSData
-        return (Alamofire.ParameterEncoding.URL.encode(mutableURLRequest, parameters: nil).0, uploadData)
-    }
+//    func urlRequestWithComponents(urlString:String, parameters:Dictionary<String, Any>) -> (URLRequestConvertible, Data) {
+//        
+//        
+//        // create url request to send
+//        let mutableURLRequest = NSMutableURLRequest(url: URL(string: urlString)!)
+//        mutableURLRequest.HTTPMethod = Alamofire.Method.POST.rawValue
+//        //let boundaryConstant = "myRandomBoundary12345"
+//        let boundaryConstant = "NET-POST-boundary-\(arc4random())-\(arc4random())"
+//        let contentType = "multipart/form-data;boundary="+boundaryConstant
+//        mutableURLRequest.setValue(contentType, forHTTPHeaderField: "Content-Type")
+//        
+//        
+//        // create upload data to send
+//        let uploadData = NSMutableData()
+//        
+//        // add parameters
+//        for (key, value) in parameters {
+//            
+//            uploadData.append("\r\n--\(boundaryConstant)\r\n".data(using: String.Encoding.utf8)!)
+//            
+//            if value is NetData {
+//                // add image
+//                let postData = value as! NetData
+//                
+//                
+//                //uploadData.appendData("Content-Disposition: form-data; name=\"\(key)\"; filename=\"\(postData.filename)\"\r\n".dataUsingEncoding(NSUTF8StringEncoding)!)
+//                
+//                // append content disposition
+//                let filenameClause = " filename=\"\(postData.filename)\""
+//                let contentDispositionString = "Content-Disposition: form-data; name=\"\(key)\";\(filenameClause)\r\n"
+//                let contentDispositionData = contentDispositionString.data(using: String.Encoding.utf8)
+//                uploadData.append(contentDispositionData!)
+//                
+//                
+//                // append content type
+//                //uploadData.appendData("Content-Type: image/png\r\n\r\n".dataUsingEncoding(NSUTF8StringEncoding)!) // mark this.
+//                let contentTypeString = "Content-Type: \(postData.mimeType.getString())\r\n\r\n"
+//                let contentTypeData = contentTypeString.data(using: String.Encoding.utf8)
+//                uploadData.append(contentTypeData!)
+//                uploadData.append(postData.data)
+//                
+//            }else{
+//                uploadData.append("Content-Disposition: form-data; name=\"\(key)\"\r\n\r\n\(value)".data(using: String.Encoding.utf8)!)
+//            }
+//        }
+//        uploadData.append("\r\n--\(boundaryConstant)--\r\n".data(using: String.Encoding.utf8)!)
+//        
+//        
+//        
+//        // return URLRequestConvertible and NSData
+//        return (Alamofire.ParameterEncoding.URL.encode(mutableURLRequest, parameters: nil).0, uploadData)
+//    }
     
     
     
@@ -463,7 +420,7 @@ class Controller{
         let url = "\(END_POINT)\(END_POINT_LOGIN_USER)username/\(user)/password/\(pass)";
         //print(url);
         let net = NetworkUtils();
-        let netRes = net.doGetJsonNetResponse(  url );
+        let netRes = net.doGetJsonNetResponse(  url: url );
         //print(netRes);
         
         if(netRes == nil){
@@ -472,13 +429,13 @@ class Controller{
     
         if(netRes?.code == 1){
             //print(netRes!.data);
-            let dataString = netRes!.data!.stringByReplacingOccurrencesOfString(" ", withString: "+")
+            let dataString = netRes!.data!.replacingOccurrences(of:" ", with: "+")
             //print (dataString)
             
             let usuarioTO: UsuarioTO = UsuarioTO.init(text:dataString);
 
             //print("Usuario logeado correctamente ")
-            saveUsuarioLocal(usuarioTO, tipoLogin: 1)
+            saveUsuarioLocal(usuario: usuarioTO, tipoLogin: 1)
             return 1;
         }
         return 0;
@@ -489,13 +446,13 @@ class Controller{
      *
     */
     func logoutUser(){
-        let preferences = NSUserDefaults.standardUserDefaults()
+        let preferences = UserDefaults.standard
         
-        preferences.removeObjectForKey(Constantes.PREFS_TIPO_LOGIN) //Tipo de login (local FB o TW)
-        preferences.removeObjectForKey(Constantes.PREFS_USER_ID) //Id del usaurio
-        preferences.removeObjectForKey(Constantes.PREFS_USER_NAME) //Nombre del usuario
-        preferences.removeObjectForKey(Constantes.PREFS_USER_PIC_URL) //Imagen
-        preferences.removeObjectForKey(Constantes.PREFS_USER_FB_ID) //Si esta logeado cn FBs
+        preferences.removeObject(forKey: Constantes.PREFS_TIPO_LOGIN) //Tipo de login (local FB o TW)
+        preferences.removeObject(forKey: Constantes.PREFS_USER_ID) //Id del usaurio
+        preferences.removeObject(forKey: Constantes.PREFS_USER_NAME) //Nombre del usuario
+        preferences.removeObject(forKey: Constantes.PREFS_USER_PIC_URL) //Imagen
+        preferences.removeObject(forKey: Constantes.PREFS_USER_FB_ID) //Si esta logeado cn FBs
         
         preferences.synchronize();
         //print("Borrando usuario \(didSave)");
@@ -505,12 +462,12 @@ class Controller{
     func saveUsuarioLocal(usuario: UsuarioTO, tipoLogin:Int){
         //print(usuario);
         
-        let preferences = NSUserDefaults.standardUserDefaults()
+        let preferences = UserDefaults.standard
         
-        preferences.setInteger(tipoLogin, forKey: Constantes.PREFS_TIPO_LOGIN)
-        preferences.setInteger(usuario.idUsuario!, forKey: Constantes.PREFS_USER_ID)
-        preferences.setObject(usuario.txtEmail!, forKey: Constantes.PREFS_USER_NAME)
-        preferences.setObject(usuario.usuarioPro, forKey: Constantes.PREFS_USER_PRO)
+        preferences.set(tipoLogin, forKey: Constantes.PREFS_TIPO_LOGIN)
+        preferences.set(usuario.idUsuario!, forKey: Constantes.PREFS_USER_ID)
+        preferences.set(usuario.txtEmail!, forKey: Constantes.PREFS_USER_NAME)
+        preferences.set(usuario.usuarioPro, forKey: Constantes.PREFS_USER_PRO)
         
         //preferences.setObject(usuario.uriPicImageStr!, forKey: Constantes.PREFS_USER_PIC_URL)
         //preferences.setInteger(usuario.fbUser!, forKey: Constantes.PREFS_USER_FB_ID)
@@ -526,9 +483,9 @@ class Controller{
      Marca los delitos seleccionados
      **/
     func setDelitoSelected(idDelito: Int, estado: Bool){
-        let preferences = NSUserDefaults.standardUserDefaults()
+        let preferences = UserDefaults.standard
         let delito : String = Constantes.PREFS_TIPO_DELITO_ + String(idDelito);
-        preferences.setBool(estado, forKey: delito)
+        preferences.set(estado, forKey: delito)
         preferences.synchronize();
         //print(didSave);
     }
@@ -539,8 +496,9 @@ class Controller{
     **/
     func getCountDelitosSeleccionados()->Int{
         var count = 0;
-        for (var i = 0; i < Constantes.CANT_MAXIMA_DELITOS; i += 1){
-            if(isDelitoSelected(i)){
+        
+        for i in 0...Constantes.CANT_MAXIMA_DELITOS {
+            if(isDelitoSelected(idDelito: i)){
                 count += 1;
             }
         }
@@ -552,10 +510,10 @@ class Controller{
      Verifica si un delito esta marcado
      */
     func isDelitoSelected(idDelito: Int)->Bool{
-        let preferences = NSUserDefaults.standardUserDefaults();
+        let preferences = UserDefaults.standard;
         let delito : String = Constantes.PREFS_TIPO_DELITO_ + String(idDelito);
-        if preferences.objectForKey(delito) != nil{
-            return preferences.boolForKey(delito);
+        if preferences.object(forKey: delito) != nil{
+            return preferences.bool(forKey: delito);
         }
         return false;
     }
@@ -564,23 +522,23 @@ class Controller{
     Valida si el usuario está logeado en el sistema
     */
     func isUsuaioLogeado()->Bool{
-        let preferences = NSUserDefaults.standardUserDefaults();
-        return preferences.objectForKey(Constantes.PREFS_TIPO_LOGIN) != nil;
+        let preferences = UserDefaults.standard;
+        return preferences.object(forKey: Constantes.PREFS_TIPO_LOGIN) != nil;
     }
     
     
     func firstTimeRun()->Bool{
-        let preferences = NSUserDefaults.standardUserDefaults();
-        if(preferences.objectForKey(Constantes.PREFS_FIRST_TIME_RUN) != nil){
-            return preferences.boolForKey(Constantes.PREFS_FIRST_TIME_RUN);
+        let preferences = UserDefaults.standard;
+        if(preferences.object(forKey: Constantes.PREFS_FIRST_TIME_RUN) != nil){
+            return preferences.bool(forKey: Constantes.PREFS_FIRST_TIME_RUN);
         }else{
             return false;
         }
     }
     
     func setFirstTimeRun(estado:Bool){
-        let preferences = NSUserDefaults.standardUserDefaults()
-        preferences.setBool(estado, forKey: Constantes.PREFS_FIRST_TIME_RUN)
+        let preferences = UserDefaults.standard
+        preferences.set(estado, forKey: Constantes.PREFS_FIRST_TIME_RUN)
         //  Save to disk
         preferences.synchronize();
     }
@@ -589,11 +547,11 @@ class Controller{
     Rcupera el nombre del usuario
     */
     func getUserName()->String{
-        let preferences = NSUserDefaults.standardUserDefaults();
-        if( preferences.objectForKey(Constantes.PREFS_USER_NAME) == nil){
+        let preferences = UserDefaults.standard;
+        if( preferences.object(forKey: Constantes.PREFS_USER_NAME) == nil){
             return "Sin registrar";
         }else{
-            return preferences.stringForKey(Constantes.PREFS_USER_NAME)!;
+            return preferences.string(forKey: Constantes.PREFS_USER_NAME)!;
         }
     }
     
@@ -601,11 +559,11 @@ class Controller{
     Rcupera el id del usuario
     */
     func getUserId()->Int{
-        let preferences = NSUserDefaults.standardUserDefaults();
-        if( preferences.objectForKey(Constantes.PREFS_USER_ID) == nil){
+        let preferences = UserDefaults.standard;
+        if( preferences.object(forKey: Constantes.PREFS_USER_ID) == nil){
             return -1;
         }else{
-            return preferences.integerForKey(Constantes.PREFS_USER_ID);
+            return preferences.integer(forKey: Constantes.PREFS_USER_ID);
         }
     }
     
@@ -613,11 +571,11 @@ class Controller{
     Rcupera el si el usuario es pro
     */
     func getUserPro()->Int{
-        let preferences = NSUserDefaults.standardUserDefaults();
-        if( preferences.objectForKey(Constantes.PREFS_USER_PRO) == nil){
+        let preferences = UserDefaults.standard;
+        if( preferences.object(forKey: Constantes.PREFS_USER_PRO) == nil){
             return -1;
         }else{
-            return preferences.integerForKey(Constantes.PREFS_USER_PRO);
+            return preferences.integer(forKey: Constantes.PREFS_USER_PRO);
         }
     }
    
@@ -625,11 +583,11 @@ class Controller{
     Rcupera el la imagen del usuario
     */
     func getUserPic()->String{
-        let preferences = NSUserDefaults.standardUserDefaults();
-        if( preferences.objectForKey(Constantes.PREFS_USER_PIC_URL) == nil){
+        let preferences = UserDefaults.standard;
+        if( preferences.object(forKey: Constantes.PREFS_USER_PIC_URL) == nil){
             return "";
         }else{
-            return preferences.stringForKey(Constantes.PREFS_USER_PIC_URL)!;
+            return preferences.string(forKey: Constantes.PREFS_USER_PIC_URL)!;
         }
     }
     
@@ -637,17 +595,17 @@ class Controller{
     Rcupera el la imagen del usuario
     */
     func getUserFBId()->Int{
-        let preferences = NSUserDefaults.standardUserDefaults();
-        if( preferences.objectForKey(Constantes.PREFS_USER_FB_ID) == nil){
+        let preferences = UserDefaults.standard;
+        if( preferences.object(forKey: Constantes.PREFS_USER_FB_ID) == nil){
             return -1;
         }else{
-            return preferences.integerForKey(Constantes.PREFS_USER_FB_ID);
+            return preferences.integer(forKey: Constantes.PREFS_USER_FB_ID);
         }
     }
     
     
     static func getDelitoIco(tipo:Int)->UIImage{
-        return UIImage(named: getDelitoIcoName(tipo))!
+        return UIImage(named: getDelitoIcoName(tipo: tipo))!
     }
     
     static func getDelitoIcoName(tipo:Int)->String{
@@ -781,25 +739,25 @@ class Controller{
     //MARK: ==================== HELP ===========================
     
     func showHelp()->Bool{
-        let preferences = NSUserDefaults.standardUserDefaults();
-        if( preferences.objectForKey(Constantes.PREFS_SHOW_HELP) == nil){
+        let preferences = UserDefaults.standard;
+        if( preferences.object(forKey: Constantes.PREFS_SHOW_HELP) == nil){
             return true;
         }else{
-            return preferences.boolForKey(Constantes.PREFS_SHOW_HELP);
+            return preferences.bool(forKey: Constantes.PREFS_SHOW_HELP);
         }
     }
     
     func forceShowHelp(){
-        let preferences = NSUserDefaults.standardUserDefaults()
-        preferences.setBool(true, forKey: Constantes.PREFS_SHOW_HELP);
+        let preferences = UserDefaults.standard
+        preferences.set(true, forKey: Constantes.PREFS_SHOW_HELP);
         
         //  Save to disk
         preferences.synchronize();
     }
     
     func hideHelp(){
-        let preferences = NSUserDefaults.standardUserDefaults()
-        preferences.setBool(false, forKey: Constantes.PREFS_SHOW_HELP);
+        let preferences = UserDefaults.standard
+        preferences.set(false, forKey: Constantes.PREFS_SHOW_HELP);
         
         //  Save to disk
         preferences.synchronize();
@@ -819,7 +777,7 @@ class Controller{
         let net = NetworkUtils();
         
         //Llamada a crear usuario con callback
-        net.doPostJsonSyncParams(url, params: params);
+        net.doPostJsonSyncParams(url: url, params: params);
         
         //print("============== TERMINA REGISTRANDO DEVICE ======================")
     }
@@ -832,23 +790,23 @@ extension UIImage {
     
     func resize(scale:CGFloat)-> UIImage {
         let imageView = UIImageView(frame: CGRect(origin: CGPoint(x: 0, y: 0), size: CGSize(width: size.width*scale, height: size.height*scale)))
-        imageView.contentMode = UIViewContentMode.ScaleAspectFit
+        imageView.contentMode = UIViewContentMode.scaleAspectFit
         imageView.image = self
         UIGraphicsBeginImageContext(imageView.bounds.size)
-        imageView.layer.renderInContext(UIGraphicsGetCurrentContext()!)
+        imageView.layer.render(in: UIGraphicsGetCurrentContext()!)
         let result = UIGraphicsGetImageFromCurrentImageContext()
         UIGraphicsEndImageContext()
-        return result
+        return result!
     }
     func resizeToWidth(width:CGFloat)-> UIImage {
         let imageView = UIImageView(frame: CGRect(origin: CGPoint(x: 0, y: 0), size: CGSize(width: width, height: CGFloat(ceil(width/size.width * size.height)))))
-        imageView.contentMode = UIViewContentMode.ScaleAspectFit
+        imageView.contentMode = UIViewContentMode.scaleAspectFit
         imageView.image = self
         UIGraphicsBeginImageContext(imageView.bounds.size)
-        imageView.layer.renderInContext(UIGraphicsGetCurrentContext()!)
+        imageView.layer.render(in: UIGraphicsGetCurrentContext()!)
         let result = UIGraphicsGetImageFromCurrentImageContext()
         UIGraphicsEndImageContext()
-        return result
+        return result!
     }
 }
 

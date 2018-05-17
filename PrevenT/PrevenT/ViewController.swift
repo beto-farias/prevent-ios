@@ -22,6 +22,8 @@ class ViewController: UIViewController, CLLocationManagerDelegate, GMSMapViewDel
     //Esta variable debe cambiar segun la seleccion del usuaro
     var tiempoDias = 1;
     
+     var loadDelitosCount = 0
+    
     @IBOutlet var btnOneDay: UIButton!
     @IBOutlet var btnTwoDays: UIButton!
     @IBOutlet var btnOneWeek: UIButton!
@@ -54,11 +56,11 @@ class ViewController: UIViewController, CLLocationManagerDelegate, GMSMapViewDel
     var delitoDetalles:DelitoTO = DelitoTO();
     
     @IBOutlet var viewDelitoDetail: UIView!
-    @IBOutlet var imgBadge: DesignableImageView!
-    @IBOutlet var txtTituloDelito: DesignableLabel!
-    @IBOutlet var txtTiempoDelito: DesignableLabel!
+    @IBOutlet var imgBadge: UIImageView!
+    @IBOutlet var txtTituloDelito: UILabel!
+    @IBOutlet var txtTiempoDelito: UILabel!
     @IBOutlet var txtDistanciaDelito: UILabel!
-    @IBOutlet var txtDetalleDelito: DesignableTextView!
+    @IBOutlet var txtDetalleDelito: UITextView!
     @IBOutlet var txtNumVictimas: UILabel!
     @IBOutlet var txtNumDelincuentes: UILabel!
     @IBOutlet var txtNumLikes: UILabel!
@@ -116,7 +118,7 @@ class ViewController: UIViewController, CLLocationManagerDelegate, GMSMapViewDel
         
         //Registra el dispositivo en el servidor
         let controller:Controller = Controller();
-        controller.registrarDispositivo(gcmId);
+        controller.registrarDispositivo(idDevice: gcmId);
     }
     
     func mensajePushRecibido(info:Dictionary<String,AnyObject>){
@@ -127,7 +129,7 @@ class ViewController: UIViewController, CLLocationManagerDelegate, GMSMapViewDel
         print(netRes.toString());
         
         if(netRes.code == 1){
-            manageNotificationPushRecibida(netRes);
+            manageNotificationPushRecibida(netRes: netRes);
         }
     }
     
@@ -153,13 +155,13 @@ class ViewController: UIViewController, CLLocationManagerDelegate, GMSMapViewDel
         
         //Obtiene el delito numDelito:Int, idDelito:Int
         
-        let delito:DelitoTO = controller.getDelitoDetails(delitoNotificacion.id_num_delito, idDelito: delitoNotificacion.id_evento);
+        let delito:DelitoTO = controller.getDelitoDetails(numDelito:delitoNotificacion.id_num_delito, idDelito: delitoNotificacion.id_evento);
         
         
         delitoDetalles = delito;
         
         let pinLocation:CLLocation = CLLocation(latitude: delito.num_latitud, longitude: delito.num_longitud);
-        let distance:CLLocationDistance = (userLocation?.distanceFromLocation(pinLocation))!;
+        let distance:CLLocationDistance = (userLocation?.distance(from: pinLocation))!;
         
         if(distance > Constantes.MAX_DISTANCIA_NOTIFICACION && netRes.id != -999){
             print("El evento ha ocurrido a mas de 1,000 metros (\(distance)), no se notifica")
@@ -168,19 +170,19 @@ class ViewController: UIViewController, CLLocationManagerDelegate, GMSMapViewDel
         
        
         
-        let nombreDelito:String = Controller.getDelitoStrByType(delito.id_tipo_delito);
-        let distanciaDelito:String = StringUtils.getDistance(distance);
+        let nombreDelito:String = Controller.getDelitoStrByType(tipo: delito.id_tipo_delito);
+        let distanciaDelito:String = StringUtils.getDistance(distance: distance);
         //Crea la notificacion
         let messageBody:String = "\(netRes.message!), \(nombreDelito) a \(distanciaDelito) de ti";
-        showNotification( messageBody );
+        showNotification( messageBody: messageBody );
         
         //Crea la alerta en la ventana para ver el delito
-        let alert = UIAlertController(title: "PrevenT", message: messageBody, preferredStyle: UIAlertControllerStyle.Alert)
-        alert.addAction(UIAlertAction(title: "Ver", style: UIAlertActionStyle.Default, handler: {(alert: UIAlertAction!) in self.showDelitoDetails(delito)}));
+        let alert = UIAlertController(title: "PrevenT", message: messageBody, preferredStyle: UIAlertControllerStyle.alert)
+        alert.addAction(UIAlertAction(title: "Ver", style: UIAlertActionStyle.default, handler: {(alert: UIAlertAction!) in self.showDelitoDetails(delito: delito)}));
         
         
-        alert.addAction(UIAlertAction(title: "Cerrar", style: UIAlertActionStyle.Default, handler: nil ))
-        self.presentViewController(alert, animated: true, completion: nil);
+        alert.addAction(UIAlertAction(title: "Cerrar", style: UIAlertActionStyle.default, handler: nil ))
+        self.present(alert, animated: true, completion: nil);
     }
     
     
@@ -188,22 +190,23 @@ class ViewController: UIViewController, CLLocationManagerDelegate, GMSMapViewDel
     //====================== TERMINAN FUNCIONES PUSH ====================================================================
     
     
-    override func viewWillAppear(animated: Bool) {
+    override func viewWillAppear(_ animated: Bool) {
         let controller:Controller = Controller();
         
         if(!controller.firstTimeRun()){
             //marca como seleccionados todos los delitos
-            for(var i = 0; i <= Constantes.CANT_MAXIMA_DELITOS; i += 1){
-                controller.setDelitoSelected(i, estado: true);
+            for i in 0...Constantes.CANT_MAXIMA_DELITOS{
+            //for(var i = 0; i <= Constantes.CANT_MAXIMA_DELITOS; i += 1){
+                controller.setDelitoSelected(idDelito: i, estado: true);
             }
             
             //Deshabilita los delitos que ya no aplican
-            controller.setDelitoSelected(Constantes.TIPO_DELITO_MOVIMIENTOS_SOCIALES, estado: false);
+            controller.setDelitoSelected(idDelito: Constantes.TIPO_DELITO_MOVIMIENTOS_SOCIALES, estado: false);
             
             
             
-            performSegueWithIdentifier("home2Intro", sender: self);
-            controller.setFirstTimeRun(true); //Indica que ya se corrio una vez
+            performSegue(withIdentifier: "home2Intro", sender: self);
+            controller.setFirstTimeRun(estado: true); //Indica que ya se corrio una vez
             return;
         }
         
@@ -211,27 +214,27 @@ class ViewController: UIViewController, CLLocationManagerDelegate, GMSMapViewDel
         
         myMapView.clear()
         loadDelitos()
-        viewDelitoDetail.hidden = true;
+        viewDelitoDetail.isHidden = true;
         timeBarSetup();
-        viewCargaDatos.hidden = true;
+        viewCargaDatos.isHidden = true;
         
         if(!controller.showHelp()){
-            helpViewContainer.hidden = true;
+            helpViewContainer.isHidden = true;
             //Oculta la barra de navegación
-            self.navigationController?.navigationBarHidden = false;
+            self.navigationController?.isNavigationBarHidden = false;
         }else{
-            helpViewContainer.hidden = false;
+            helpViewContainer.isHidden = false;
             //Oculta la barra de navegación
-            self.navigationController?.navigationBarHidden = true;
+            self.navigationController?.isNavigationBarHidden = true;
         }
         
         
         let countDelitosSeleccionados = controller.getCountDelitosSeleccionados();
         
         if(countDelitosSeleccionados == 0){
-            viewNoHaseleccionadoEventos.hidden = false;
+            viewNoHaseleccionadoEventos.isHidden = false;
         }else{
-            viewNoHaseleccionadoEventos.hidden = true;
+            viewNoHaseleccionadoEventos.isHidden = true;
         }
         //print("Delitos seleccionados \(countDelitosSeleccionados)");
     }
@@ -246,40 +249,40 @@ class ViewController: UIViewController, CLLocationManagerDelegate, GMSMapViewDel
     
     
     func timeBarSetup(){
-        btnOneWeek.enabled  = false;
-        btnOneMonth.enabled = false;
-        btnTreeMonths.enabled = false;
+        btnOneWeek.isEnabled  = false;
+        btnOneMonth.isEnabled = false;
+        btnTreeMonths.isEnabled = false;
         
-        btnOneWeek.setTitleColor(UIColor.grayColor(), forState: UIControlState.Normal)
-        btnOneMonth.setTitleColor(UIColor.grayColor(), forState: UIControlState.Normal)
-        btnTreeMonths.setTitleColor(UIColor.grayColor(), forState: UIControlState.Normal)
+        btnOneWeek.setTitleColor(UIColor.gray, for: .normal)
+        btnOneMonth.setTitleColor(UIColor.gray, for: .normal)
+        btnTreeMonths.setTitleColor(UIColor.gray, for: .normal)
         
         let controller:Controller = Controller();
         
         if(controller.getUserId() > 0){
-            btnOneWeek.enabled  = true;
-            btnOneWeek.setTitleColor(UIColor.whiteColor(), forState: UIControlState.Normal)
+            btnOneWeek.isEnabled  = true;
+            btnOneWeek.setTitleColor(UIColor.white, for: .normal)
         }
         
         if(controller.getUserPro() > 0){
-            btnOneWeek.enabled  = true;
-            btnOneMonth.enabled = true;
-            btnTreeMonths.enabled = true;
+            btnOneWeek.isEnabled  = true;
+            btnOneMonth.isEnabled = true;
+            btnTreeMonths.isEnabled = true;
             
-            btnOneWeek.setTitleColor(UIColor.whiteColor(), forState: UIControlState.Normal)
-            btnOneMonth.setTitleColor(UIColor.whiteColor(), forState: UIControlState.Normal)
-            btnTreeMonths.setTitleColor(UIColor.whiteColor(), forState: UIControlState.Normal)
+            btnOneWeek.setTitleColor(UIColor.white, for: .normal)
+            btnOneMonth.setTitleColor(UIColor.white, for: .normal)
+            btnTreeMonths.setTitleColor(UIColor.white, for: .normal)
         }
         
         
         //TODO version con todo abierto
-        btnOneWeek.enabled  = true;
-        btnOneMonth.enabled = true;
-        btnTreeMonths.enabled = true;
+        btnOneWeek.isEnabled  = true;
+        btnOneMonth.isEnabled = true;
+        btnTreeMonths.isEnabled = true;
         
-        btnOneWeek.setTitleColor(UIColor.whiteColor(), forState: UIControlState.Normal)
-        btnOneMonth.setTitleColor(UIColor.whiteColor(), forState: UIControlState.Normal)
-        btnTreeMonths.setTitleColor(UIColor.whiteColor(), forState: UIControlState.Normal)
+        btnOneWeek.setTitleColor(UIColor.white, for: .normal)
+        btnOneMonth.setTitleColor(UIColor.white, for: .normal)
+        btnTreeMonths.setTitleColor(UIColor.white, for: .normal)
     }
     
     
@@ -289,19 +292,19 @@ class ViewController: UIViewController, CLLocationManagerDelegate, GMSMapViewDel
     @IBAction func autoCompleteClicked(sender: AnyObject) {
         let autocompleteController = GMSAutocompleteViewController();
         autocompleteController.delegate = self;
-        self.presentViewController(autocompleteController, animated: true, completion: nil);
+        self.present(autocompleteController, animated: true, completion: nil);
     }
     
     @IBAction func autoCompleteTextClicked(sender: AnyObject) {
         let autocompleteController = GMSAutocompleteViewController();
         autocompleteController.delegate = self;
-        self.presentViewController(autocompleteController, animated: true, completion: nil);
+        self.present(autocompleteController, animated: true, completion: nil);
     }
     
     @IBAction func autoCompleteTextTouch(sender: AnyObject) {
         let autocompleteController = GMSAutocompleteViewController();
         autocompleteController.delegate = self;
-        self.presentViewController(autocompleteController, animated: true, completion: nil);
+        self.present(autocompleteController, animated: true, completion: nil);
     }
     
     
@@ -309,24 +312,27 @@ class ViewController: UIViewController, CLLocationManagerDelegate, GMSMapViewDel
     //MARK =============== HELP =================
     @IBAction func hideHelpAction(sender: AnyObject) {
         let controller:Controller = Controller();
-        helpViewContainer.hidden = true;
+        helpViewContainer.isHidden = true;
         controller.hideHelp();
         //Muestra la barra de navegación
-        self.navigationController?.navigationBarHidden = false;
+        self.navigationController?.isNavigationBarHidden = false;
     }
     
     
     //MARK:  MAPAS ------------------------
     
+   
+    
+    
     private func initGoogleMaps(){
         //Posicion inicial de la camara México
-        let camera = GMSCameraPosition.cameraWithLatitude(23.364303,longitude: -111.5866852, zoom: zoomLevel);
+        let camera = GMSCameraPosition.camera(withLatitude: 23.364303,longitude: -111.5866852, zoom: zoomLevel);
         
         
-        myMapView = GMSMapView.mapWithFrame(CGRectMake(0, 0,  self.view.bounds.width,self.view.bounds.height), camera:camera)
-        self.myMapView.animateToCameraPosition(camera);
+        myMapView = GMSMapView.map(withFrame: CGRect(x:0, y:0,  width:self.view.bounds.width, height:self.view.bounds.height), camera:camera)
+        self.myMapView.animate(to: camera);
         myMapView.delegate = self;
-        myMapView.myLocationEnabled = true
+        myMapView.isMyLocationEnabled = true
         myMapView.settings.myLocationButton = true;
         myMapView.settings.compassButton = true;
         
@@ -348,7 +354,7 @@ class ViewController: UIViewController, CLLocationManagerDelegate, GMSMapViewDel
         
     }
     
-    func locationManager(manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
+    func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
         //print("locationManager Update");
         
         //Localización del usuario
@@ -360,8 +366,8 @@ class ViewController: UIViewController, CLLocationManagerDelegate, GMSMapViewDel
         
         //actualiza la camara a la posicion del usuario
         //Posicion inicial de la camara México
-        let camera = GMSCameraPosition.cameraWithLatitude(userLocation!.coordinate.latitude, longitude: userLocation!.coordinate.longitude, zoom: zoomLevel);
-        self.myMapView.animateToCameraPosition(camera);
+        let camera = GMSCameraPosition.camera(withLatitude: userLocation!.coordinate.latitude, longitude: userLocation!.coordinate.longitude, zoom: zoomLevel);
+        self.myMapView.animate(to: camera);
         
         
         //Una vez que se tiene la posicion del usuario de piden los delitos
@@ -369,8 +375,8 @@ class ViewController: UIViewController, CLLocationManagerDelegate, GMSMapViewDel
         
         //Si se pide que muestre un delito
         if((delitoDetalles.id_evento) != nil ){
-            addMarker(delitoDetalles);
-            showDelitoDetails(delitoDetalles);
+            addMarker(delito:delitoDetalles);
+            showDelitoDetails(delito: delitoDetalles);
         }
     }
     
@@ -379,9 +385,8 @@ class ViewController: UIViewController, CLLocationManagerDelegate, GMSMapViewDel
     }
     
     
-    
-    
-    var loadDelitosCount = 0
+
+   
     
     
     //Carga los delitos de manera asincrona
@@ -395,13 +400,14 @@ class ViewController: UIViewController, CLLocationManagerDelegate, GMSMapViewDel
         if( (userLocation) != nil){
             let controller = Controller();
             
-            viewCargaDatos.hidden = false;
+            viewCargaDatos.isHidden = false;
             loaderCount = 0;
             
-            for( var i = 1; i <= Constantes.CANT_MAXIMA_DELITOS; i += 1){
-                if(controller.isDelitoSelected(i)){
+            //for( var i = 1; i <= Constantes.CANT_MAXIMA_DELITOS; i += 1){
+            for i in 0...Constantes.CANT_MAXIMA_DELITOS{
+                if(controller.isDelitoSelected(idDelito: i)){
                     self.loaderCount += 1;
-                    controller.getDelitosByTipo(i, tiempoDias: tiempoDias, lat: userLocation!.coordinate.latitude, lon: userLocation!.coordinate.longitude ,  viewHandlerDelitos: loadDelitosCallBack)
+                    controller.getDelitosByTipo(idTipo: i, tiempoDias: tiempoDias, lat: userLocation!.coordinate.latitude, lon: userLocation!.coordinate.longitude ,  viewHandlerDelitos: loadDelitosCallBack)
                 }
             }
         }
@@ -414,9 +420,9 @@ class ViewController: UIViewController, CLLocationManagerDelegate, GMSMapViewDel
         self.loaderCount -= 1;
         //print("Loader count \(self.loaderCount)");
         if(self.loaderCount <= 1){
-            dispatch_async(dispatch_get_main_queue()) { [unowned self] in
+            DispatchQueue.main.async() { [unowned self] in
                 //CozyLoadingActivity.show("Cargando delitos...", disableUI: true)
-                self.viewCargaDatos.hidden = true;
+                self.viewCargaDatos.isHidden = true;
             }
         }
         
@@ -424,8 +430,8 @@ class ViewController: UIViewController, CLLocationManagerDelegate, GMSMapViewDel
         
         for d in delitosList{
             //Correr en el thread principal
-            dispatch_async(dispatch_get_main_queue()) { [unowned self] in
-                self.addMarker(d);
+            DispatchQueue.main.async() { [unowned self] in
+                self.addMarker(delito:d);
             }
         }
     }
@@ -436,7 +442,7 @@ class ViewController: UIViewController, CLLocationManagerDelegate, GMSMapViewDel
         //print("Agregando marcador \(delito.id_tipo_delito)");
         
         let cont = Controller();
-        let ico = cont.getMarkerIcoByType(delito.id_tipo_delito);
+        let ico = cont.getMarkerIcoByType(tipo: delito.id_tipo_delito);
         
         let marker = GMSMarker()
         marker.position = CLLocationCoordinate2DMake(delito.num_latitud, delito.num_longitud);
@@ -444,7 +450,7 @@ class ViewController: UIViewController, CLLocationManagerDelegate, GMSMapViewDel
         
         marker.appearAnimation = kGMSMarkerAnimationPop;
         marker.icon = UIImage(named: ico);
-        marker.infoWindowAnchor = CGPointMake(0.44, 0.45);
+        marker.infoWindowAnchor = CGPoint(x:0.44, y:0.45);
         marker.snippet = "\(delito.id_evento)-\(delito.id_num_delito)"
         marker.map = self.myMapView
         
@@ -453,54 +459,52 @@ class ViewController: UIViewController, CLLocationManagerDelegate, GMSMapViewDel
     
     
     
-    
-    
-    func mapView(mapView: GMSMapView!, didTapAtCoordinate coordinate: CLLocationCoordinate2D) {
-        //print(coordinate);
+    func mapView(_ mapView: GMSMapView, didTapAt coordinate: CLLocationCoordinate2D) {
         hideDelitoDetails();
     }
     
     
-    //Click en un marker
-    func mapView(mapView: GMSMapView!, didTapMarker marker: GMSMarker!) -> Bool {
-        viewDelitoDetail.hidden = true;
+    func mapView(_ mapView: GMSMapView, didTap marker: GMSMarker) -> Bool {
+        viewDelitoDetail.isHidden = true;
         
         //print("Snippet \(marker.snippet)")
         
-        let delitoData = marker.snippet!.componentsSeparatedByString("-")
+        let delitoData = marker.snippet!.components(separatedBy:"-")
         let idDelito: String = delitoData[0]
         let numDelito: String = delitoData[1]
         
         let controller:Controller =  Controller();
         
-        delitoDetalles = controller.getDelitoDetails( numDelito, idDelito: idDelito);
+        delitoDetalles = controller.getDelitoDetails(numDelito:numDelito, idDelito: idDelito);
         
-        showDelitoDetails(delitoDetalles);
+        showDelitoDetails(delito: delitoDetalles);
         
         return true;
     }
     
+
+    
     func showDelitoDetails(delito:DelitoTO){
-        dispatch_async(dispatch_get_main_queue()) {
+        DispatchQueue.main.async() {
             
-            self.addMarker(delito);
+            self.addMarker(delito:delito);
             
             let pinLocation:CLLocation = CLLocation(latitude: delito.num_latitud, longitude: delito.num_longitud);
             
-            let distance:CLLocationDistance = (self.userLocation?.distanceFromLocation(pinLocation))!;
+            let distance:CLLocationDistance = (self.userLocation?.distance(from: pinLocation))!;
             
-            let camera = GMSCameraPosition.cameraWithLatitude( delito.num_latitud, longitude: delito.num_longitud, zoom: self.zoomLevelDelitoDetalle)
-            self.myMapView.animateToCameraPosition(camera);
+            let camera = GMSCameraPosition.camera( withLatitude: delito.num_latitud, longitude: delito.num_longitud, zoom: self.zoomLevelDelitoDetalle)
+            self.myMapView.animate(to: camera);
             
-            self.imgBadge.image = Controller.getDelitoIco(self.delitoDetalles.id_tipo_delito)
-            self.txtTituloDelito.text = Controller.getDelitoStrByType(self.delitoDetalles.id_tipo_delito);
+            self.imgBadge.image = Controller.getDelitoIco(tipo: self.delitoDetalles.id_tipo_delito)
+            self.txtTituloDelito.text = Controller.getDelitoStrByType(tipo: self.delitoDetalles.id_tipo_delito);
             
             if((self.delitoDetalles.fch_delito) != nil){
-                self.txtTiempoDelito.text = StringUtils.getNumberOfDays( self.delitoDetalles.fch_delito )
+                self.txtTiempoDelito.text = StringUtils.getNumberOfDays( time: self.delitoDetalles.fch_delito )
             }else{
                 self.txtTiempoDelito.text = "Hoy";
             }
-            self.txtDistanciaDelito.text = "\(StringUtils.getDistance( distance)) de tí"
+            self.txtDistanciaDelito.text = "\(StringUtils.getDistance( distance: distance)) de tí"
             self.txtDetalleDelito.text = "\(self.delitoDetalles.txt_resumen)\r\n\(self.delitoDetalles.txt_descripcion_lugar)";
             self.txtNumDelincuentes.text = "\(self.delitoDetalles.num_delincuentes)"
             self.txtNumLikes.text = "\(self.delitoDetalles.num_likes)";
@@ -514,12 +518,12 @@ class ViewController: UIViewController, CLLocationManagerDelegate, GMSMapViewDel
             }
             
             if(self.delitoDetalles.multimedia.count == 0){
-                self.btnMultimedia.enabled = false;
+                self.btnMultimedia.isEnabled = false;
             }else{
-                self.btnMultimedia.enabled = true;
+                self.btnMultimedia.isEnabled = true;
             }
             
-            self.viewDelitoDetail.hidden = false;
+            self.viewDelitoDetail.isHidden = false;
             
             self.myMapView.settings.scrollGestures = false
             self.myMapView.settings.zoomGestures = false
@@ -531,7 +535,7 @@ class ViewController: UIViewController, CLLocationManagerDelegate, GMSMapViewDel
         
         myMapView.settings.scrollGestures = true
         myMapView.settings.zoomGestures = true
-        viewDelitoDetail.hidden = true;
+        viewDelitoDetail.isHidden = true;
     }
     
     
@@ -540,7 +544,7 @@ class ViewController: UIViewController, CLLocationManagerDelegate, GMSMapViewDel
     @IBAction func likeAction(sender: UIButton) {
         let controller:Controller = Controller();
         
-        let res = controller.addPoint(delitoDetalles.id_evento, numDelito: delitoDetalles.id_num_delito, vhNetResponse: likeActionHandler);
+        let res = controller.addPoint(idEvento: delitoDetalles.id_evento, numDelito: delitoDetalles.id_num_delito, vhNetResponse: likeActionHandler);
         
         if(res == -1){
             self.view.makeToast(message: "Debes iniciar sesión para poder dar like")
@@ -556,7 +560,7 @@ class ViewController: UIViewController, CLLocationManagerDelegate, GMSMapViewDel
         switch(netRes.code!){
         case 1:
             
-            dispatch_async(dispatch_get_main_queue(), {
+            DispatchQueue.main.async(execute: {
                 // code here
                 self.numLikes += 1;
                 self.txtNumLikes.text = "\(self.numLikes)";
@@ -582,7 +586,7 @@ class ViewController: UIViewController, CLLocationManagerDelegate, GMSMapViewDel
         }
         
         
-        dispatch_async(dispatch_get_main_queue()) { [unowned self] in
+        DispatchQueue.main.async() { [unowned self] in
             self.view.makeToast(message: message);
         }
     }
@@ -644,7 +648,7 @@ class ViewController: UIViewController, CLLocationManagerDelegate, GMSMapViewDel
     
     
     //Antes de hacer el Segue
-    override func shouldPerformSegueWithIdentifier(identifier: String, sender: AnyObject?) -> Bool {
+    override func shouldPerformSegue(withIdentifier identifier: String, sender: Any?) -> Bool {
         //print(identifier)
         if (identifier == "home2PuntoEventoSegue") {
             //Valida que el usuario esté logeado
@@ -654,7 +658,7 @@ class ViewController: UIViewController, CLLocationManagerDelegate, GMSMapViewDel
                 let alert = UIAlertView()
                 alert.title = ""
                 alert.message = "Debes iniciar sesión para poder reportar eventos";
-                alert.addButtonWithTitle("Ok");
+                alert.addButton(withTitle: "Ok");
                 alert.show();
                 
                 return false;
@@ -673,9 +677,9 @@ class ViewController: UIViewController, CLLocationManagerDelegate, GMSMapViewDel
         return true;
     }
     
-    override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject!) {
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         if(segue.identifier == "home2Gallery"){
-            let destinationVC = segue.destinationViewController as! GalleryViewController
+            let destinationVC = segue.destination as! GalleryViewController
             destinationVC.multimedia = delitoDetalles.multimedia;
             destinationVC.numDelito = delitoDetalles.id_num_delito;
             destinationVC.idEvento = delitoDetalles.id_evento;
@@ -683,15 +687,15 @@ class ViewController: UIViewController, CLLocationManagerDelegate, GMSMapViewDel
         
         if (segue.identifier == "home2PuntoEventoSegue") {
             let center:CLLocationCoordinate2D = myMapView.camera.target;
-            let destination:WizardSelectMapViewController = segue.destinationViewController as! WizardSelectMapViewController;
+            let destination:WizardSelectMapViewController = segue.destination as! WizardSelectMapViewController;
             destination.latitud = center.latitude;
             destination.longitud = center.longitude;
         }
     }
     
     func centerMap(location:CLLocationCoordinate2D){
-        let camera = GMSCameraPosition.cameraWithTarget(location, zoom: zoomLevelPlace);
-        self.myMapView.animateToCameraPosition(camera);
+        let camera = GMSCameraPosition.camera(withTarget: location, zoom: zoomLevelPlace);
+        self.myMapView.animate(to: camera);
     }
     
 } //Cierra clase
@@ -700,7 +704,7 @@ class ViewController: UIViewController, CLLocationManagerDelegate, GMSMapViewDel
 extension ViewController: GMSAutocompleteViewControllerDelegate {
     
     // Handle the user's selection.
-    func viewController(viewController: GMSAutocompleteViewController!, didAutocompleteWithPlace place: GMSPlace!) {
+    func viewController(_ viewController: GMSAutocompleteViewController!, didAutocompleteWith place: GMSPlace!) {
         /*
          print("Place name: ", place.name)
          print("Place address: ", place.formattedAddress)
@@ -708,14 +712,14 @@ extension ViewController: GMSAutocompleteViewControllerDelegate {
          print("Place latitude: ", place.coordinate.latitude)
          print("Place longitude: ", place.coordinate.longitude)
          */
-        dispatch_async(dispatch_get_main_queue()) {
-            self.centerMap(place.coordinate);
+        DispatchQueue.main.async() {
+            self.centerMap(location: place.coordinate);
             
             //Agrega un marcador a la posicion seleccionada
-            self.addMarker(place);
+            self.addMarker(place:place);
         }
         
-        self.dismissViewControllerAnimated(true, completion: nil)
+        self.dismiss(animated: true, completion: nil)
     }
     
     
@@ -730,14 +734,15 @@ extension ViewController: GMSAutocompleteViewControllerDelegate {
         marker.map = self.myMapView
     }
     
-    func viewController(viewController: GMSAutocompleteViewController!, didAutocompleteWithError error: NSError!) {
+    
+    func viewController(_ viewController: GMSAutocompleteViewController, didFailAutocompleteWithError error: Error) {
         // TODO: handle the error.
-        print("Error: ", error.description)
+        print("Error: ", error)
     }
     
-    // User canceled the operation.
-    func wasCancelled(viewController: GMSAutocompleteViewController!) {
-        self.dismissViewControllerAnimated(true, completion: nil)
+    
+    func wasCancelled(_ viewController: GMSAutocompleteViewController) {
+        self.dismiss(animated: true, completion: nil)
     }
     
     func viewController(viewController: GMSAutocompleteViewController!, didFailAutocompleteWithError error: NSError!) {
@@ -750,18 +755,18 @@ extension ViewController: GMSAutocompleteViewControllerDelegate {
     //------------------------------------------------------------------------------------------------------------------------------------------
     private func initPushGCM(){
         //Mensajes push
-        let appDelegate = UIApplication.sharedApplication().delegate as! AppDelegate
-        NSNotificationCenter.defaultCenter().addObserver(self, selector: "updateRegistrationStatus:",name: appDelegate.registrationKey, object: nil)
-        NSNotificationCenter.defaultCenter().addObserver(self, selector: "showReceivedMessage:",name: appDelegate.messageKey, object: nil)
+        let appDelegate = UIApplication.shared.delegate as! AppDelegate
+        NotificationCenter.default.addObserver(self, selector: #selector(ViewController.updateRegistrationStatus),name: NSNotification.Name(rawValue: appDelegate.registrationKey), object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(ViewController.showReceivedMessage),name: NSNotification.Name(rawValue: appDelegate.messageKey), object: nil)
     }
     
-    func updateRegistrationStatus(notification: NSNotification) {
+    @objc func updateRegistrationStatus(notification: NSNotification) {
         
         if let info:Dictionary<String,String> = notification.userInfo as? Dictionary<String,String> {
             if let error = info["error"] {
-                errorAlRegistrarDispositivo(info["error"]!);
+                errorAlRegistrarDispositivo(error: info["error"]!);
             } else if let _ = info["registrationToken"] {
-                registroCorrectoDispositivo(info["registrationToken"]!);
+                registroCorrectoDispositivo(registrationToken: info["registrationToken"]!);
             }
         } else {
             //print("Software failure. Guru meditation.")
@@ -772,9 +777,9 @@ extension ViewController: GMSAutocompleteViewControllerDelegate {
     
     
     //Recepcion de notificacion
-    func showReceivedMessage(notification: NSNotification) {
+    @objc func showReceivedMessage(notification: NSNotification) {
         if let info = notification.userInfo as? Dictionary<String,AnyObject> {
-            mensajePushRecibido(info);
+            mensajePushRecibido(info: info);
             
         } else {
             print("Software failure. Guru meditation.")
@@ -784,24 +789,24 @@ extension ViewController: GMSAutocompleteViewControllerDelegate {
     
     //Crea la notificacion
     func showNotification(messageBody:String){
-        let settings = UIApplication.sharedApplication().currentUserNotificationSettings()
+        let settings = UIApplication.shared.currentUserNotificationSettings
         
-        if settings!.types == .None {
-            let ac = UIAlertController(title: "Can't schedule", message: "Either we don't have permission to schedule notifications, or we haven't asked yet.", preferredStyle: .Alert)
-            ac.addAction(UIAlertAction(title: "OK", style: .Default, handler: nil))
-            presentViewController(ac, animated: true, completion: nil)
+        if settings!.types == .none {
+            let ac = UIAlertController(title: "Can't schedule", message: "Either we don't have permission to schedule notifications, or we haven't asked yet.", preferredStyle: .alert)
+            ac.addAction(UIAlertAction(title: "OK", style: .default, handler: nil))
+            present(ac, animated: true, completion: nil)
             return
         }
         
         let notification = UILocalNotification()
-        notification.fireDate = NSDate(timeIntervalSinceNow: 1)
+        notification.fireDate = Date(timeIntervalSinceNow: 1)
         notification.alertBody = messageBody;
         //notification.alertAction = "Notificación de eBrigth"
         notification.soundName = UILocalNotificationDefaultSoundName
         notification.userInfo = ["CustomField1": "w00t"]
         
         
-        UIApplication.sharedApplication().scheduleLocalNotification(notification)
+        UIApplication.shared.scheduleLocalNotification(notification)
         
     }
     

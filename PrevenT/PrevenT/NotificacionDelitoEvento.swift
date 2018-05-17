@@ -20,7 +20,7 @@ class NotificacionDelitoEvento{
     convenience init(dataString:String){
         do{
             print("NotificacionDelitoEvento \(dataString)");
-            let myDictionary: NSDictionary = try NSJSONSerialization.JSONObjectWithData(dataString.dataUsingEncoding(NSUTF8StringEncoding)!, options: .AllowFragments) as! NSDictionary
+            let myDictionary: NSDictionary = try JSONSerialization.jsonObject(with: dataString.data(using: String.Encoding.utf8)!, options: .allowFragments) as! NSDictionary
             self.init(data: myDictionary);
         }catch let error{
             print("got an error creating the request: \(error)")
@@ -30,11 +30,11 @@ class NotificacionDelitoEvento{
     
     init (data: NSDictionary){
         
-        self.id_num_delito      = parseString2Int(data["id_num_delito"] as! String);
-        self.id_evento          = parseString2Int(data["id_evento"] as! String);
-        self.id_tipo_delito     = parseString2Int(data["id_tipo_delito"] as! String);
-        self.id_usuario         = parseString2Int(data["id_usuario"] as! String);
-        self.id_usuario         = parseString2Int(data["id_usuario"] as! String);
+        self.id_num_delito      = parseString2Int(data: data["id_num_delito"] as! String);
+        self.id_evento          = parseString2Int(data:data["id_evento"] as! String);
+        self.id_tipo_delito     = parseString2Int(data:data["id_tipo_delito"] as! String);
+        self.id_usuario         = parseString2Int(data:data["id_usuario"] as! String);
+        self.id_usuario         = parseString2Int(data:data["id_usuario"] as! String);
     }
     
     func toString(){

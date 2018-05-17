@@ -24,16 +24,16 @@ class TimeLineController : UIViewController, UITableViewDataSource, UITableViewD
         timeLineTableView.dataSource = self;
     }
     
-    override func viewWillAppear(animated: Bool) {
+    override func viewWillAppear(_ animated: Bool) {
         
         //--- VENTANA DE ESPERE ---------------
         let alert: UIAlertView = UIAlertView();
         alert.message = "Espere por favor";
         
-        let loadingIndicator: UIActivityIndicatorView = UIActivityIndicatorView(frame: CGRectMake(50, 10, 37, 37)) as UIActivityIndicatorView
+        let loadingIndicator: UIActivityIndicatorView = UIActivityIndicatorView(frame: CGRect(x:50, y:10, width:37, height:37)) as UIActivityIndicatorView
         loadingIndicator.center = self.view.center;
         loadingIndicator.hidesWhenStopped = true
-        loadingIndicator.activityIndicatorViewStyle = UIActivityIndicatorViewStyle.Gray
+        loadingIndicator.activityIndicatorViewStyle = UIActivityIndicatorViewStyle.gray
         loadingIndicator.startAnimating();
         
         alert.setValue(loadingIndicator, forKey: "accessoryView")
@@ -43,24 +43,23 @@ class TimeLineController : UIViewController, UITableViewDataSource, UITableViewD
         
         
         //---------- PROCESO ASINCRONO ---------------
-        let priority = DISPATCH_QUEUE_PRIORITY_DEFAULT
-        dispatch_async(dispatch_get_global_queue(priority, 0)) {
+        DispatchQueue.main.async(execute: {
             
             let controller = Controller();
             //Carga los primeros delitos a partir del 0
-            self.data = controller.getDelitosTimeLine(0);
+            self.data = controller.getDelitosTimeLine(index: 0);
             
             //Hilo principal
-            dispatch_async(dispatch_get_main_queue()) {
-                
-                alert.dismissWithClickedButtonIndex(-1, animated: true)
+           // DispatchQueue.main.sync(execute:  {
+                alert.dismiss(withClickedButtonIndex: -1, animated: true)
                 //print("TimeLineController \(self.data.count)");
                 self.timeLineTableView.reloadData();
                 if(self.data.count == 0){
                     self.view.makeToast(message: "No se encontraron eventos para mostrar, verifique su conexión a internet");
                 }
-            }
-        }//Cieera proceso asincrono
+           // });
+            
+        });//Cieera proceso asincrono
     }
     
     
@@ -68,32 +67,32 @@ class TimeLineController : UIViewController, UITableViewDataSource, UITableViewD
     
     
     //Cantidad de renglones
-    func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int{
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int{
         let count = data.count;
         return count;
     }
     
     
     //Recupera un renglon
-    func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
-        let cell:TimeLineTableViewCell = tableView.dequeueReusableCellWithIdentifier("timeLineCell", forIndexPath: indexPath) as! TimeLineTableViewCell
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        let cell:TimeLineTableViewCell = tableView.dequeueReusableCell(withIdentifier: "timeLineCell", for: indexPath) as! TimeLineTableViewCell
         
         //Obtiene el delito del arreglo
         let delito = data[indexPath.item];
         
         //Busca el icono
-        let icoStr = Controller.getDelitoIcoName(delito.id_tipo_delito);
+        let icoStr = Controller.getDelitoIcoName(tipo: delito.id_tipo_delito);
         let ico = UIImage(named: icoStr);
         
         //Busca el nombre del delito
-        let delitoStr = Controller.getDelitoStrByType(delito.id_tipo_delito);
+        let delitoStr = Controller.getDelitoStrByType(tipo: delito.id_tipo_delito);
         
         //Arma la celda
         cell.imgIco.image = ico;
         cell.txtTitulo.text = delitoStr;
         cell.txtDireccion.text = delito.txt_direccion;
-        cell.txtFecha.text="\(StringUtils.getNumberOfDays(delito.fch_delito))";
-        cell.txtNumLikes.text = "\(delito.num_likes)";
+        cell.txtFecha.text="\(StringUtils.getNumberOfDays(time: delito.fch_delito))";
+        cell.txtNumLikes.text = "\(delito.num_likes!)";
         
         //print("Row \(indexPath.row) \(data.count)")
         
@@ -101,7 +100,7 @@ class TimeLineController : UIViewController, UITableViewDataSource, UITableViewD
         
         if( row+1 == data.count ){
             //print("LastRow \(data.count)")
-            getMoreData(data.count);
+            getMoreData(row: data.count);
         }
         
         return cell;
@@ -109,24 +108,23 @@ class TimeLineController : UIViewController, UITableViewDataSource, UITableViewD
     
     
     // Seleccion del renglon
-    func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         //CODE TO BE RUN ON CELL TOUCH
         print("Renglon seleccionado \(indexPath.item)");
         
         let delito:DelitoTO = data[indexPath.row];
         
         let controller:Controller = Controller();
-        delitoSeleccionado2Show = controller.getDelitoDetails("\(delito.id_num_delito)", idDelito: "\(delito.id_evento)");
-        performSegueWithIdentifier("timeLine2Home", sender: tableView)
+        delitoSeleccionado2Show = controller.getDelitoDetails(numDelito:"\(delito.id_num_delito!)", idDelito: "\(delito.id_evento!)");
+        performSegue(withIdentifier: "timeLine2Home", sender: tableView)
     }
     
     //--------------------------- SEGUES -----------------------
     
    
-    
-    override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         //print(segue.identifier);
-        let destino:ViewController = segue.destinationViewController as! ViewController;
+        let destino:ViewController = segue.destination as! ViewController;
         destino.delitoDetalles = delitoSeleccionado2Show!;
     }
     
@@ -138,13 +136,13 @@ class TimeLineController : UIViewController, UITableViewDataSource, UITableViewD
     @IBAction func likeAction(sender: UIButton) {
         let controller:Controller = Controller();
         
-        let buttonPosition = sender.convertPoint(CGPointZero, toView: self.timeLineTableView)
-        let indexPath = self.timeLineTableView.indexPathForRowAtPoint(buttonPosition)
+        let buttonPosition = sender.convert(CGPoint.zero, to: self.timeLineTableView)
+        let indexPath = self.timeLineTableView.indexPathForRow(at: buttonPosition)
         if indexPath != nil {
             //print("Indexpath: \(indexPath?.row)");
             indexLikeSelected = indexPath!.row;
             let delito:DelitoTO = data[(indexPath!.row)];
-            let res = controller.addPoint(delito.id_evento,numDelito: delito.id_num_delito,vhNetResponse: likeActionCallback);
+            let res = controller.addPoint(idEvento: delito.id_evento,numDelito: delito.id_num_delito,vhNetResponse: likeActionCallback);
             if(res == -1){
                 //Mostar toast de que no está logeado el usuario
                 //print("El suaurio no esta logeado");
@@ -165,7 +163,7 @@ class TimeLineController : UIViewController, UITableViewDataSource, UITableViewD
         case 1:
             let delito:DelitoTO = data[indexLikeSelected];
             delito.num_likes = delito.num_likes + 1;
-            dispatch_async(dispatch_get_main_queue(), {
+            DispatchQueue.main.async(execute:  {
                 // code here
                 self.timeLineTableView.reloadData();
                 self.timeLineTableView.setNeedsDisplay();
@@ -190,16 +188,16 @@ class TimeLineController : UIViewController, UITableViewDataSource, UITableViewD
             break;
         }
         
-        dispatch_async(dispatch_get_main_queue()) { [unowned self] in
+        DispatchQueue.main.sync { [unowned self] in
             self.view.makeToast(message: message);
-        }
+       }
     }
     
     
     // Recuepera más datos para mostrar
     func getMoreData(row: Int){
         let controller : Controller = Controller();
-        let newRows: [DelitoTO] = controller.getDelitosTimeLine(row);
+        let newRows: [DelitoTO] = controller.getDelitosTimeLine(index: row);
         
         //print("Traer rows desde \(row)");
         

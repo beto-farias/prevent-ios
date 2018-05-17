@@ -38,7 +38,7 @@ public class DelitoTO{
     
     convenience init(dataString:String){
         do{
-            let myDictionary: NSDictionary = try NSJSONSerialization.JSONObjectWithData(dataString.dataUsingEncoding(NSUTF8StringEncoding)!, options: .AllowFragments) as! NSDictionary
+            let myDictionary: NSDictionary = try JSONSerialization.jsonObject(with: dataString.data(using: String.Encoding.utf8)!, options: .allowFragments) as! NSDictionary
             self.init(data: myDictionary);
         }catch let error{
             print("got an error creating the request: \(error)")
@@ -47,23 +47,23 @@ public class DelitoTO{
     }
     
     init (data: NSDictionary){
-        self.id_num_delito      = parseString2Int(data["id_num_delito"] as! String);
-        self.id_evento          = parseString2Int(data["id_evento"] as! String);
-        self.id_tipo_delito     = parseString2Int(data["id_tipo_delito"] as! String);
-        self.num_latitud        = parseString2Double(data["num_latitud"] as! String);
-        self.num_longitud       = parseString2Double(data["num_longitud"] as! String);
+        self.id_num_delito      = parseString2Int(data: data["id_num_delito"] as! String);
+        self.id_evento          = parseString2Int(data: data["id_evento"] as! String);
+        self.id_tipo_delito     = parseString2Int(data: data["id_tipo_delito"] as! String);
+        self.num_latitud        = parseString2Double(data: data["num_latitud"] as! String);
+        self.num_longitud       = parseString2Double(data: data["num_longitud"] as! String);
         
         if((data["txt_resumen"]) != nil){
             self.txt_resumen        = (data["txt_resumen"] as? String)!
         }
         if((data["num_delincuentes"]) != nil){
-            self.num_delincuentes   = parseString2Int(data["num_delincuentes"] as! String);
+            self.num_delincuentes   = parseString2Int(data: data["num_delincuentes"] as! String);
         }
         if((data["num_victimas"]) != nil){
-            self.num_victimas       = parseString2Int(data["num_victimas"] as! String);
+            self.num_victimas       = parseString2Int(data: data["num_victimas"] as! String);
         }
         if((data["num_likes"]) != nil){
-            self.num_likes          = parseString2Int(data["num_likes"] as! String);
+            self.num_likes          = parseString2Int(data: data["num_likes"] as! String);
         }
         if((data["fch_delito"]) != nil){
             self.fch_delito         = (data["fch_delito"] as! Int );
@@ -84,7 +84,7 @@ public class DelitoTO{
             for item in dataArray { // loop through data items
                 let obj = item as! NSDictionary
                 let mto:MultimediaTO = MultimediaTO();
-                mto.id_tipo_multimedia = parseString2Int(obj["id_tipo_multimedia"] as! String);
+                mto.id_tipo_multimedia = parseString2Int(data: obj["id_tipo_multimedia"] as! String);
                 mto.txt_archivo = obj["txt_archivo"] as! String;
                 multimedia.append(mto);
             }

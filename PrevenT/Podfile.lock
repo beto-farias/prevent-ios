@@ -1,7 +1,7 @@
 PODS:
-  - Alamofire (3.4.0)
-  - Alamofire-Synchronous (3.0.0):
-    - Alamofire (~> 3.0)
+  - Alamofire (4.7.2)
+  - Alamofire-Synchronous (4.0.0):
+    - Alamofire (~> 4.0)
   - GGLInstanceID (1.1.6)
   - Google/CloudMessaging (2.0.3):
     - GGLInstanceID (~> 1.0)
@@ -27,27 +27,41 @@ PODS:
   - GoogleSymbolUtilities (1.1.0)
   - GoogleUtilities (1.2.0):
     - GoogleSymbolUtilities (~> 1.0)
-  - SwiftHTTP (1.0.5)
+  - Kingfisher (4.7.0)
+  - Spring (1.0.5)
 
 DEPENDENCIES:
-  - Alamofire (~> 3.4)
-  - Alamofire-Synchronous (~> 3.0)
+  - Alamofire (~> 4.7)
+  - Alamofire-Synchronous (~> 4.0)
   - Google/CloudMessaging
   - GoogleMaps
-  - SwiftHTTP (~> 1.0.0)
+  - Kingfisher (~> 4.0)
+  - Spring (from `https://github.com/MengTo/Spring.git`)
+
+EXTERNAL SOURCES:
+  Spring:
+    :git: https://github.com/MengTo/Spring.git
+
+CHECKOUT OPTIONS:
+  Spring:
+    :commit: c540239f3590bbaf4a35c3959c329dd5ed4e3eee
+    :git: https://github.com/MengTo/Spring.git
 
 SPEC CHECKSUMS:
-  Alamofire: c19a627cefd6a95f840401c49ab1f124e07f54ee
-  Alamofire-Synchronous: dc5dccc284e03c3b760e09c655dfe6fa292364b6
+  Alamofire: e4fa87002c137ba2d8d634d2c51fabcda0d5c223
+  Alamofire-Synchronous: eedf1e6e961c3795a63c74990b3f7d9fbfac7e50
   GGLInstanceID: f92465924a9b8a48f712829d22e223653ab8dc72
-  Google: 61379f0072bc561a7e174d23a6cbe41bd6d8599c
-  GoogleCloudMessaging: f37ea14dd0f41d4d889c10b5559dd35bbfd9ac26
+  Google: b256691df67064b88d45d4fb472d43e1fe8bb202
+  GoogleCloudMessaging: 2f503711dac162dc08c0c418643210793335eca2
   GoogleInterchangeUtilities: 427382e42d8a340038bec37c6fdfd316e14b5fa2
   GoogleIPhoneUtilities: 1c2996078f079d2fc54453dbd13eaf5523666550
   GoogleMaps: 7a6caeb8336d7cb42982e969fc9b1b20a889fe79
   GoogleNetworkingUtilities: ec1e9911aca811eb18b7144394fee6168b607785
   GoogleSymbolUtilities: eb3965ea12710569c7b80db198a39e39b18613f7
   GoogleUtilities: 85f8ad6b251544286a97163133d042ec95f889c5
-  SwiftHTTP: edb45e72f27d1d95d328d2b2c16a61aa94f1e9f7
+  Kingfisher: da6b005aa96d37698e3e4f1ccfe96a5b9bbf27d6
+  Spring: 3c7666eccefdeb87140008dc81043f89f8dbb787
 
-COCOAPODS: 0.39.0
+PODFILE CHECKSUM: 4d73a3f3cb0cf32fb2c45a154a0f4a16715a9609
+
+COCOAPODS: 1.4.0

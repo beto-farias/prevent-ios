@@ -11,9 +11,9 @@ import Foundation
 class StringUtils {
     
     static func  convertStringToDictionary(text: String) -> [String:String]? {
-        if let data = text.dataUsingEncoding(NSUTF8StringEncoding) {
+        if let data = text.data(using: String.Encoding.utf8) {
             do{
-                let json = try NSJSONSerialization.JSONObjectWithData(data, options: NSJSONReadingOptions()) as? [String:String]
+                let json = try JSONSerialization.jsonObject(with: data, options: JSONSerialization.ReadingOptions()) as? [String:String]
                 return json
             }catch let error {
                 print(error)
@@ -25,9 +25,13 @@ class StringUtils {
     
     static func getDistance(distance:Double)->String{
         if(distance/1000 >= 1.0){
-            return "\(Double(distance/1000).roundToPlaces(2)) km";
+            
+            //return "\(Double(distance/1000).roundToPlaces(places: 2)) km";
+            return "\(Double(distance/1000)) km";
         }else{
-            return "\(Double(distance).roundToPlaces(2)) m";
+            
+            //return "\(Double(distance).roundToPlaces(places: 2)) m";
+            return "\(Double(distance)) m";
         }
     
     }
@@ -37,7 +41,7 @@ class StringUtils {
         let emailRegEx = "^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$"
         
         let emailTest = NSPredicate(format:"SELF MATCHES %@", emailRegEx)
-        return emailTest.evaluateWithObject(testStr)
+        return emailTest.evaluate(with: testStr)
     }
     
     
@@ -52,7 +56,7 @@ class StringUtils {
         
         let currentTime = Int64(nowDouble);
         
-        let elapsedTime = currentTime - time;
+        let elapsedTime = currentTime - Int64(time);
         let numberDays = elapsedTime / (60 * 60 * 24);
         
         //print("elapsedTime \(elapsedTime)");
@@ -83,10 +87,11 @@ class StringUtils {
    
 }
 
-extension Double {
-    /// Rounds the double to decimal places value
-    func roundToPlaces(places:Int) -> Double {
-        let divisor = pow(10.0, Double(places))
-        return round(self * divisor) / divisor
-    }
-}
+//extension Double {
+//    /// Rounds the double to decimal places value
+//    func roundToPlaces(places:Int) -> Double {
+//        let divisor = pow(10.0, Double(places))
+//        return round(self * divisor) / divisor
+//    }
+//}
+
