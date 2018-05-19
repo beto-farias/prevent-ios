@@ -26,12 +26,12 @@ class StringUtils {
     static func getDistance(distance:Double)->String{
         if(distance/1000 >= 1.0){
             
-            //return "\(Double(distance/1000).roundToPlaces(places: 2)) km";
-            return "\(Double(distance/1000)) km";
+            return "\(Double(distance/1000).rounded(toPlaces: 2)) km";
+            //return "\(Double(distance/1000)) km";
         }else{
             
-            //return "\(Double(distance).roundToPlaces(places: 2)) m";
-            return "\(Double(distance)) m";
+            return "\(Double(distance).rounded(toPlaces: 2)) m";
+            //return "\(Double(distance)) m";
         }
     
     }
@@ -85,6 +85,14 @@ class StringUtils {
     
     
    
+}
+
+extension Double {
+    /// Rounds the double to decimal places value
+    func rounded(toPlaces places:Int) -> Double {
+        let divisor = pow(10.0, Double(places))
+        return (self * divisor).rounded() / divisor
+    }
 }
 
 //extension Double {

@@ -204,8 +204,9 @@ class NetworkUtils{
                     //delegate.didNetworkFinishedHeaders(headers: httpResponse, option: option);
                 }
                 
-                //handler(data)
+
                 let netRes:NetResponse = self.parseNetResponse(contentData: data)!
+                
                 //Llama al callback
                 handler(netRes)
                 }.resume();
@@ -335,7 +336,7 @@ class NetworkUtils{
         do{
             let jsonData : AnyObject! = try JSONSerialization.jsonObject(with: contentData as Data, options: JSONSerialization.ReadingOptions()) as AnyObject;
             
-            //print (jsonData)
+            print (jsonData)
             
             let jsonDictionary = jsonData as! NSDictionary;
             

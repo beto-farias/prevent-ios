@@ -142,7 +142,7 @@ class TimeLineController : UIViewController, UITableViewDataSource, UITableViewD
             //print("Indexpath: \(indexPath?.row)");
             indexLikeSelected = indexPath!.row;
             let delito:DelitoTO = data[(indexPath!.row)];
-            let res = controller.addPoint(idEvento: delito.id_evento,numDelito: delito.id_num_delito,vhNetResponse: likeActionCallback);
+            let res = controller.addPoint(idEvento: delito.id_evento!,numDelito: delito.id_num_delito!,vhNetResponse: likeActionCallback);
             if(res == -1){
                 //Mostar toast de que no está logeado el usuario
                 //print("El suaurio no esta logeado");

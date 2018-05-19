@@ -9,7 +9,8 @@
 //
 
 import UIKit
-import GoogleMaps
+import GoogleMaps;
+import GooglePlaces;
 
 class ViewController: UIViewController, CLLocationManagerDelegate, GMSMapViewDelegate {
     
@@ -82,6 +83,8 @@ class ViewController: UIViewController, CLLocationManagerDelegate, GMSMapViewDel
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do any additional setup after loading the view, typically from a nib.
+        
+        //navigationController?.isNavigationBarHidden = false;
         
         //Inicializa la localizacion
         initLocalizacion();
@@ -295,18 +298,35 @@ class ViewController: UIViewController, CLLocationManagerDelegate, GMSMapViewDel
         self.present(autocompleteController, animated: true, completion: nil);
     }
     
+    
+    @IBAction func autoCompleteTouchDown(_ sender: Any) {
+        let autocompleteController = GMSAutocompleteViewController();
+        autocompleteController.delegate = self;
+        self.present(autocompleteController, animated: true, completion: nil);
+    }
+    
+   /*
     @IBAction func autoCompleteTextClicked(sender: AnyObject) {
         let autocompleteController = GMSAutocompleteViewController();
         autocompleteController.delegate = self;
         self.present(autocompleteController, animated: true, completion: nil);
     }
+ */
     
-    @IBAction func autoCompleteTextTouch(sender: AnyObject) {
+    @IBAction func autoCompleteTouchUpInside(_ sender: Any) {
         let autocompleteController = GMSAutocompleteViewController();
         autocompleteController.delegate = self;
         self.present(autocompleteController, animated: true, completion: nil);
     }
     
+    
+    /*
+    @IBAction func autoCompleteTextTouch(sender: AnyObject) {
+        let autocompleteController = GMSAutocompleteViewController();
+        autocompleteController.delegate = self;
+        self.present(autocompleteController, animated: true, completion: nil);
+    }
+    */
     
     
     //MARK =============== HELP =================
@@ -448,10 +468,10 @@ class ViewController: UIViewController, CLLocationManagerDelegate, GMSMapViewDel
         marker.position = CLLocationCoordinate2DMake(delito.num_latitud, delito.num_longitud);
         
         
-        marker.appearAnimation = kGMSMarkerAnimationPop;
+        marker.appearAnimation = GMSMarkerAnimation.pop;
         marker.icon = UIImage(named: ico);
         marker.infoWindowAnchor = CGPoint(x:0.44, y:0.45);
-        marker.snippet = "\(delito.id_evento)-\(delito.id_num_delito)"
+        marker.snippet = "\(delito.id_evento!)-\(delito.id_num_delito!)"
         marker.map = self.myMapView
         
         //print("Snippet \(marker.snippet)")
@@ -467,11 +487,12 @@ class ViewController: UIViewController, CLLocationManagerDelegate, GMSMapViewDel
     func mapView(_ mapView: GMSMapView, didTap marker: GMSMarker) -> Bool {
         viewDelitoDetail.isHidden = true;
         
-        //print("Snippet \(marker.snippet)")
+        let delitoData:[String] = marker.snippet!.components(separatedBy:"-");
         
-        let delitoData = marker.snippet!.components(separatedBy:"-")
-        let idDelito: String = delitoData[0]
-        let numDelito: String = delitoData[1]
+        let idDelito:String  = delitoData[0];
+        let numDelito:String = delitoData[1];
+        
+        
         
         let controller:Controller =  Controller();
         
@@ -505,7 +526,9 @@ class ViewController: UIViewController, CLLocationManagerDelegate, GMSMapViewDel
                 self.txtTiempoDelito.text = "Hoy";
             }
             self.txtDistanciaDelito.text = "\(StringUtils.getDistance( distance: distance)) de tí"
+            
             self.txtDetalleDelito.text = "\(self.delitoDetalles.txt_resumen)\r\n\(self.delitoDetalles.txt_descripcion_lugar)";
+            
             self.txtNumDelincuentes.text = "\(self.delitoDetalles.num_delincuentes)"
             self.txtNumLikes.text = "\(self.delitoDetalles.num_likes)";
             self.txtNumVictimas.text = "\(self.delitoDetalles.num_victimas)";
@@ -729,7 +752,7 @@ extension ViewController: GMSAutocompleteViewControllerDelegate {
         
         //print("\(place.coordinate.latitude) , \(place.coordinate.longitude)")
         
-        marker.appearAnimation = kGMSMarkerAnimationPop;
+        marker.appearAnimation = GMSMarkerAnimation.pop;
         marker.title = place.name;
         marker.map = self.myMapView
     }

@@ -84,9 +84,9 @@ class WizardTipoDelitoViewController: UIViewController,UICollectionViewDelegate,
     }
     
     //boton de seleccionar un delito
-    func collectionView(collectionView: UICollectionView, didSelectItemAtIndexPath indexPath: NSIndexPath) {
+    func collectionView(_ collectionView: UICollectionView, didDeselectItemAt indexPath: IndexPath) {
         //Index path seleccionado
-        //print("Elemento seleccionado \(indexPath.row)")
+        print("Elemento seleccionado \(indexPath.row)")
         
         delitoReporteTO.id_tipo_delito = idDelitosList[indexPath.row]
         delitoReporteTO.id_num_delito = 1
@@ -94,6 +94,8 @@ class WizardTipoDelitoViewController: UIViewController,UICollectionViewDelegate,
         let vc : AnyObject! = self.storyboard!.instantiateViewController(withIdentifier: "WizardReportarBase")
         self.show(vc as! UIViewController, sender: vc)
     }
+    
+    
 
 
 }

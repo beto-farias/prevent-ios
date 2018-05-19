@@ -12,6 +12,7 @@ class WizardReportarBaseViewController: UIViewController {
     
     
     let name:String = "";
+    var delitoSeleccionado2Show:DelitoTO?;
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -55,24 +56,24 @@ class WizardReportarBaseViewController: UIViewController {
         
         
         //---------- PROCESO ASINCRONO ---------------
-        DispatchQueue.main.async(execute:  {
+        DispatchQueue.main.async {
             
             let controller:Controller = Controller();
             let netRes = controller.reporteDelito(delito:delitoReporteTO);
             
             //Hilo principal
-            DispatchQueue.main.sync {
+            DispatchQueue.global().sync(execute: {
                 alert.dismiss(withClickedButtonIndex: -1, animated: true)
                 let delito:DelitoTO = DelitoTO(dataString: netRes.data!);
                 
-                self.delitoSeleccionado2Show = controller.getDelitoDetails(numDelito:"\(delito.id_num_delito)", idDelito: "\(delito.id_evento)");
+                self.delitoSeleccionado2Show = controller.getDelitoDetails(numDelito:"\(delito.id_num_delito!)", idDelito: "\(delito.id_evento!)");
                 //Regresa al home usuando el hilo principal
               
                 self.view.makeToast(message: "Su reporte ha sido almacenado correctamente");
                 self.performSegue(withIdentifier: "delitoBase2Home", sender: self.name)
              
             }
-        });//Termina proceso
+        )};//Termina proceso
     }//Termina método
     
     func reporteDelitoCortoHandler(netRes:NetResponse){
@@ -88,12 +89,9 @@ class WizardReportarBaseViewController: UIViewController {
         
     }
     
-    var delitoSeleccionado2Show:DelitoTO?;
+   
 
-    
-    @IBAction func masDetallesAction(sender: AnyObject) {
-    }
-    
+
     
     
     //--------------------------- SEGUES -----------------------

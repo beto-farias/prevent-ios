@@ -14,10 +14,14 @@ use_frameworks!
 source 'https://github.com/CocoaPods/Specs.git'
 platform :ios,'9.0'
 pod 'GoogleMaps'
-pod 'Google/CloudMessaging'
+pod 'GooglePlaces'
+#pod 'Google/CloudMessaging'
 pod 'Alamofire', '~> 4.7'
 pod 'Alamofire-Synchronous', '~> 4.0'
 pod 'Spring', :git => 'https://github.com/MengTo/Spring.git'
 pod 'Kingfisher', '~> 4.0'
+
+pod 'Firebase/Core'
+pod 'Firebase/Messaging'
 
 end

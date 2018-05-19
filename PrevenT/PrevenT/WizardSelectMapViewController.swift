@@ -114,22 +114,16 @@ class WizardSelectMapViewController: UIViewController, CLLocationManagerDelegate
         marker.position = center;
         
         marker.icon = UIImage(named: "icon-reportar-delito")
-        marker.appearAnimation = kGMSMarkerAnimationPop;
+        marker.appearAnimation = GMSMarkerAnimation.pop;
         marker.map = self.myMapView
         
         //Espera unos segundos antes de hacer el segue
         let seconds = 0.5
-        let delay = seconds * Double(NSEC_PER_SEC)  // nanoseconds per seconds
-//        let dispatchTime = dispatch_time(DISPATCH_TIME_NOW, Int64(delay))
         
+        DispatchQueue.main.asyncAfter(deadline: .now() + seconds) {
+            self.performSegue(withIdentifier: "puntoEvento2tipoEvento", sender: sender)
+        }
         
-        print("Comentado")
-        
-//        dispatch_after(dispatchTime, dispatch_get_main_queue(), {
-//
-//           self.performSegueWithIdentifier("puntoEvento2tipoEvento", sender: sender)
-//
-//        })
     }
     
     

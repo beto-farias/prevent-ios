@@ -119,8 +119,9 @@ class Controller{
     //Recupera el detalle de un delito especifico, de manera sincrona
     //
     func getDelitoDetails(numDelito:String, idDelito:String)->DelitoTO{
+
         let url: String = "\(END_POINT)\(END_POINT_DETALLE_DELITO)idNumDelito/\(numDelito)/idEvento/\(idDelito)";
-        //print(url);
+        print(url);
         let net = NetworkUtils();
         let jsonData:NSDictionary = net.doGetJsonString(urlString: url);
         let delito = DelitoTO(data: jsonData);
@@ -247,8 +248,8 @@ class Controller{
         
         
         let params = [
-            "idTipoDelito":"\(delito.id_tipo_delito)",
-            "idSubTipoDelito":"\(delito.id_num_delito)",
+            "idTipoDelito":"\(delito.id_tipo_delito!)", //
+            "idSubTipoDelito":"\(delito.id_num_delito!)", //
             "fchEvento":delito.txt_fch_delito,
             "txtDescripcion": delito.txt_resumen,
             "numVictimas":"\(delito.num_victimas)",
@@ -262,8 +263,8 @@ class Controller{
             "txtNumero":"s/n",
             "txtNumeroInterior":"s/n",
             
-            "numLatitud":"\(delito.num_latitud)",
-            "numLongitud":"\(delito.num_longitud)",
+            "numLatitud":"\(delito.num_latitud!)",
+            "numLongitud":"\(delito.num_longitud!)",
             
             "txtDescripcionLugar":delito.direccion.toString(),
             
