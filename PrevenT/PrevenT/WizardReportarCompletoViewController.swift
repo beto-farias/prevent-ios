@@ -53,8 +53,11 @@ class WizardReportarCompletoViewController: UIViewController {
 
     override func viewWillAppear(_ animated: Bool) {
         
-        NotificationCenter.default.addObserver(self, selector: Selector("keyboardWillShow:"), name:NSNotification.Name.UIKeyboardWillShow, object: nil);
-        NotificationCenter.default.addObserver(self, selector: Selector("keyboardWillHide:"), name:NSNotification.Name.UIKeyboardWillHide, object: nil);
+//        NotificationCenter.default.addObserver(self, selector: Selector(("keyboardWillShow:")), name:NSNotification.Name.UIKeyboardWillShow, object: nil);
+//        NotificationCenter.default.addObserver(self, selector: Selector(("keyboardWillHide:")), name:NSNotification.Name.UIKeyboardWillHide, object: nil);
+        NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillShow), name: .UIKeyboardWillShow, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(self.keyboardWillHide), name: NSNotification.Name.UIKeyboardWillHide, object: nil)
+
         
     }
     
@@ -65,14 +68,14 @@ class WizardReportarCompletoViewController: UIViewController {
         txtDescripcion.resignFirstResponder()
     }
     
-    func keyboardWillShow(sender: NSNotification) {
+    @objc func keyboardWillShow(sender: NSNotification) {
         if  !keyboardIsShowing {
             self.view.frame.origin.y -= 100
             keyboardIsShowing = true
         }
     }
     
-    func keyboardWillHide(sender: NSNotification) {
+    @objc func keyboardWillHide(sender: NSNotification) {
         if  keyboardIsShowing {
             self.view.frame.origin.y += 100
             keyboardIsShowing = false
@@ -136,7 +139,7 @@ class WizardReportarCompletoViewController: UIViewController {
     @IBAction func publicarDelito(sender: UIButton) {
         
         //TODO validar si hay texto
-        if( txtDescripcion.text.characters.count == 0){
+        if( txtDescripcion.text.count == 0){
             self.view.makeToast(message: "Debe indicar el relato del evento");
             return;
         }
@@ -148,11 +151,7 @@ class WizardReportarCompletoViewController: UIViewController {
         
         //print(delitoReporteTO.toString())
         
-       
-        
-        
-        
-        
+
         //--- VENTANA DE ESPERE ---------------
         let alert: UIAlertView = UIAlertView();
         alert.message = "Espere por favor";
@@ -177,18 +176,18 @@ class WizardReportarCompletoViewController: UIViewController {
             let netRes = controller.reporteDelito(delito: delitoReporteTO);
             
             //Hilo principal
-            DispatchQueue.main.sync {
+            DispatchQueue.global().sync(execute: {
             
                 alert.dismiss(withClickedButtonIndex: -1, animated: true)
                 let delito:DelitoTO = DelitoTO(dataString: netRes.data!);
                 
-                self.delitoSeleccionado2Show = controller.getDelitoDetails(numDelito: "\(delito.id_num_delito)", idDelito: "\(delito.id_evento)");
+                self.delitoSeleccionado2Show = controller.getDelitoDetails(numDelito: "\(delito.id_num_delito!)", idDelito: "\(delito.id_evento!)");
                 //Regresa al home usuando el hilo principal
                
                 self.view.makeToast(message: "Su reporte ha sido almacenado correctamente");
                 self.performSegue(withIdentifier: "reportarDelito2Home", sender: self)
                 
-            }
+            })
         });//Termina proceso
 
     }//Termina método

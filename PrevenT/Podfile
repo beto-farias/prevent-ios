@@ -24,4 +24,7 @@ pod 'Kingfisher', '~> 4.0'
 pod 'Firebase/Core'
 pod 'Firebase/Messaging'
 
+#pod 'Firebase', '~> 3.7'
+#pod 'FirebaseMessaging', '~> 1.2'
+
 end

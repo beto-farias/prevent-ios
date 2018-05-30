@@ -7,7 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		02E5DCD420AFA47B006C5513 /* GoogleService-Info (1).plist in Resources */ = {isa = PBXBuildFile; fileRef = 02E5DCD320AFA47A006C5513 /* GoogleService-Info (1).plist */; };
+		02142DAB20B763190065032E /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 02142DAA20B763190065032E /* GoogleService-Info.plist */; };
 		317C11111C068736006BF85D /* MavenProLight-100.otf in Resources */ = {isa = PBXBuildFile; fileRef = 317C110E1C068736006BF85D /* MavenProLight-100.otf */; };
 		317C11121C068736006BF85D /* MavenProLight-200.otf in Resources */ = {isa = PBXBuildFile; fileRef = 317C110F1C068736006BF85D /* MavenProLight-200.otf */; };
 		317C11131C068736006BF85D /* MavenProLight-300.otf in Resources */ = {isa = PBXBuildFile; fileRef = 317C11101C068736006BF85D /* MavenProLight-300.otf */; };
@@ -67,7 +67,8 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		02E5DCD320AFA47A006C5513 /* GoogleService-Info (1).plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = "GoogleService-Info (1).plist"; path = "../../../../../../../Downloads/GoogleService-Info (1).plist"; sourceTree = "<group>"; };
+		02142DAA20B763190065032E /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = "GoogleService-Info.plist"; path = "../../../../../../../Downloads/GoogleService-Info.plist"; sourceTree = "<group>"; };
+		02142DAC20B767ED0065032E /* PrevenT.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = PrevenT.entitlements; sourceTree = "<group>"; };
 		254CD8EBC0687069215A0547 /* Pods.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		317C110E1C068736006BF85D /* MavenProLight-100.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "MavenProLight-100.otf"; sourceTree = "<group>"; };
 		317C110F1C068736006BF85D /* MavenProLight-200.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "MavenProLight-200.otf"; sourceTree = "<group>"; };
@@ -202,7 +203,8 @@
 		CA12A3D21BED12C8002B4D21 /* PrevenT */ = {
 			isa = PBXGroup;
 			children = (
-				02E5DCD320AFA47A006C5513 /* GoogleService-Info (1).plist */,
+				02142DAC20B767ED0065032E /* PrevenT.entitlements */,
+				02142DAA20B763190065032E /* GoogleService-Info.plist */,
 				CA247B0D1D0A3E2B00C184C5 /* NetData.swift */,
 				CACAD4A41C48712F00D41824 /* Supporting Files */,
 				CA114F281C30497800A83985 /* swiftyJson */,
@@ -401,6 +403,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				02142DAB20B763190065032E /* GoogleService-Info.plist in Resources */,
 				317C11131C068736006BF85D /* MavenProLight-300.otf in Resources */,
 				CA9E2CA01C03EC490080FC65 /* DetallesReporteView.xib in Resources */,
 				CA6F6F521BFEAFC800927D02 /* DetalleDelitoIncludeView.xib in Resources */,
@@ -408,7 +411,6 @@
 				317C111B1C06874C006BF85D /* Maven Pro Regular.otf in Resources */,
 				317C11121C068736006BF85D /* MavenProLight-200.otf in Resources */,
 				317C11111C068736006BF85D /* MavenProLight-100.otf in Resources */,
-				02E5DCD420AFA47B006C5513 /* GoogleService-Info (1).plist in Resources */,
 				CA12A3DE1BED12C8002B4D21 /* LaunchScreen.storyboard in Resources */,
 				317C111A1C06874C006BF85D /* Maven Pro Medium.otf in Resources */,
 				CA12A3DB1BED12C8002B4D21 /* Assets.xcassets in Resources */,
@@ -668,6 +670,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_ENTITLEMENTS = PrevenT/PrevenT.entitlements;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
@@ -692,6 +695,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_ENTITLEMENTS = PrevenT/PrevenT.entitlements;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;

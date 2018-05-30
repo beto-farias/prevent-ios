@@ -63,9 +63,11 @@ class WizardSubtipoDelitoViewController: UIViewController, UICollectionViewDataS
         return cell
     }
     
-    func collectionView(collectionView: UICollectionView, didSelectItemAtIndexPath indexPath: NSIndexPath) {
+   
+    
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         //Index path seleccionado
-        //print("Elemento seleccionado \(indexPath.row)")
+        print("Elemento seleccionado \(indexPath.row)")
         
         let vc : AnyObject! = self.storyboard!.instantiateViewController(withIdentifier: "WizardReportarCompleto")
         self.show(vc as! UIViewController, sender: vc)

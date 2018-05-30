@@ -306,7 +306,7 @@
                                 <rect key="frame" x="-4" y="384" width="383" height="283"/>
                                 <subviews>
                                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Movimientos sociales" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="JpD-3N-HoX" customClass="DesignableLabel" customModule="PrevenT" customModuleProvider="target">
-                                        <rect key="frame" x="91.999999999999986" y="32" width="192.66666666666663" height="23.333333333333329"/>
+                                        <rect key="frame" x="91.999999999999986" y="32" width="197.66666666666663" height="20"/>
                                         <fontDescription key="fontDescription" name="MavenProBold" family="Maven Pro" pointSize="20"/>
                                         <color key="textColor" red="0.31372549020000001" green="0.25098039220000001" blue="0.46274509800000002" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                         <nil key="highlightedColor"/>
@@ -376,7 +376,7 @@
                                                 </connections>
                                             </button>
                                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="99" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="EqS-Jt-IGg">
-                                                <rect key="frame" x="48" y="24" width="40" height="28"/>
+                                                <rect key="frame" x="48" y="28" width="40" height="24"/>
                                                 <constraints>
                                                     <constraint firstAttribute="width" constant="40" id="cVi-0a-VHR"/>
                                                 </constraints>
@@ -396,7 +396,7 @@
                                                 </connections>
                                             </button>
                                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="99" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="SsG-mc-54i">
-                                                <rect key="frame" x="138" y="24" width="40" height="28"/>
+                                                <rect key="frame" x="138" y="28" width="40" height="24"/>
                                                 <constraints>
                                                     <constraint firstAttribute="width" constant="40" id="lmV-4O-c2r"/>
                                                 </constraints>
@@ -433,7 +433,7 @@
                                         <nil key="highlightedColor"/>
                                     </label>
                                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Hace 5 días" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="ZyQ-i5-Q2r" customClass="DesignableLabel" customModule="PrevenT" customModuleProvider="target">
-                                        <rect key="frame" x="92" y="63.333333333333378" width="69" height="15.333333333333336"/>
+                                        <rect key="frame" x="92" y="60" width="62" height="13"/>
                                         <fontDescription key="fontDescription" name="MavenProLight200-Regular" family="Maven Pro Light" pointSize="13"/>
                                         <color key="textColor" red="0.31372549020000001" green="0.25098039220000001" blue="0.46274509800000002" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                         <nil key="highlightedColor"/>
@@ -911,7 +911,7 @@
                                         </connections>
                                     </button>
                                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="bXx-KR-IIu" customClass="DesignableButton" customModule="PrevenT" customModuleProvider="target">
-                                        <rect key="frame" x="132" y="197" width="150" height="31"/>
+                                        <rect key="frame" x="131" y="197" width="152" height="28"/>
                                         <fontDescription key="fontDescription" name="MavenProRegular" family="Maven Pro" pointSize="16"/>
                                         <state key="normal" title="No tengo una cuenta">
                                             <color key="titleColor" red="0.36470588235294116" green="0.66274509803921566" blue="0.74509803921568629" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
@@ -1417,7 +1417,7 @@
                                                     </constraints>
                                                 </imageView>
                                                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Movimientos Sociales" textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="dHv-nS-Tn8" customClass="DesignableLabel" customModule="PrevenT" customModuleProvider="target">
-                                                    <rect key="frame" x="84" y="13.333333333333334" width="210" height="23.333333333333329"/>
+                                                    <rect key="frame" x="84" y="15" width="210" height="20"/>
                                                     <fontDescription key="fontDescription" name="MavenProMedium" family="Maven Pro" pointSize="20"/>
                                                     <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                                     <nil key="highlightedColor"/>
@@ -1443,13 +1443,13 @@
                                                     </connections>
                                                 </button>
                                                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Kjs-tO-Iq2" customClass="DesignableLabel" customModule="PrevenT" customModuleProvider="target">
-                                                    <rect key="frame" x="84" y="40.666666666666664" width="39.333333333333343" height="18.666666666666664"/>
+                                                    <rect key="frame" x="84" y="39" width="35.333333333333343" height="16"/>
                                                     <fontDescription key="fontDescription" name="MavenProLight200-Regular" family="Maven Pro Light" pointSize="16"/>
                                                     <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                                     <nil key="highlightedColor"/>
                                                 </label>
                                                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Direccion" textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="iaq-n6-GaH" customClass="DesignableLabel" customModule="PrevenT" customModuleProvider="target">
-                                                    <rect key="frame" x="83" y="67.333333333333329" width="253" height="18.666666666666671"/>
+                                                    <rect key="frame" x="83" y="63" width="253" height="16"/>
                                                     <fontDescription key="fontDescription" name="MavenProLight200-Regular" family="Maven Pro Light" pointSize="16"/>
                                                     <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                                     <nil key="highlightedColor"/>
@@ -1518,7 +1518,7 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <containerView opaque="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="avv-Vr-LBm" userLabel="Container View map">
-                                <rect key="frame" x="0.0" y="0.0" width="414" height="736"/>
+                                <rect key="frame" x="0.0" y="64" width="414" height="672"/>
                             </containerView>
                             <view contentMode="scaleToFill" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="MCg-8L-fbO" userLabel="View Texto inferior">
                                 <rect key="frame" x="0.0" y="692" width="414" height="44"/>
@@ -1558,17 +1558,22 @@
                                     </userDefinedRuntimeAttribute>
                                 </userDefinedRuntimeAttributes>
                             </button>
-                            <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" image="p_icon_target" translatesAutoresizingMaskIntoConstraints="NO" id="rKT-iG-BHP">
+                            <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="p_icon_target" translatesAutoresizingMaskIntoConstraints="NO" id="rKT-iG-BHP">
                                 <rect key="frame" x="189" y="382" width="36" height="36"/>
-                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="36" id="NWe-oC-qIZ"/>
+                                    <constraint firstAttribute="width" constant="36" id="XC1-wH-TnC"/>
+                                </constraints>
                             </imageView>
                         </subviews>
                         <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                         <constraints>
-                            <constraint firstItem="avv-Vr-LBm" firstAttribute="height" secondItem="yY9-cC-Uo3" secondAttribute="height" id="4YI-mw-vRl"/>
+                            <constraint firstItem="avv-Vr-LBm" firstAttribute="height" secondItem="yY9-cC-Uo3" secondAttribute="height" constant="-64" id="4YI-mw-vRl"/>
                             <constraint firstItem="avv-Vr-LBm" firstAttribute="width" secondItem="yY9-cC-Uo3" secondAttribute="width" id="5Se-s3-x7m"/>
-                            <constraint firstItem="avv-Vr-LBm" firstAttribute="centerY" secondItem="yY9-cC-Uo3" secondAttribute="centerY" id="GUL-j6-wyp"/>
+                            <constraint firstItem="avv-Vr-LBm" firstAttribute="centerY" secondItem="yY9-cC-Uo3" secondAttribute="centerY" constant="32" id="GUL-j6-wyp"/>
+                            <constraint firstItem="rKT-iG-BHP" firstAttribute="centerX" secondItem="yY9-cC-Uo3" secondAttribute="centerX" id="P2Y-7h-pZ0"/>
                             <constraint firstItem="avv-Vr-LBm" firstAttribute="centerX" secondItem="yY9-cC-Uo3" secondAttribute="centerX" id="l2l-r9-Fdw"/>
+                            <constraint firstItem="rKT-iG-BHP" firstAttribute="centerY" secondItem="yY9-cC-Uo3" secondAttribute="centerY" constant="32" id="qdM-FC-byU"/>
                         </constraints>
                     </view>
                     <toolbarItems/>
@@ -1590,7 +1595,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="OGu-O5-Plu" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="1343" y="1180"/>
+            <point key="canvasLocation" x="1342.0289855072465" y="1179.6195652173915"/>
         </scene>
         <!--Navigation Controller-->
         <scene sceneID="G0D-Ma-JSD">
@@ -1860,7 +1865,7 @@
                                 </constraints>
                                 <state key="normal" image="p_icon_calendar128"/>
                                 <connections>
-                                    <action selector="showDateAction:" destination="YsB-mQ-bmU" eventType="touchUpInside" id="Ac4-Mp-0L3"/>
+                                    <action selector="showDateActionWithSender:" destination="YsB-mQ-bmU" eventType="touchUpInside" id="M3t-pM-e3l"/>
                                 </connections>
                             </button>
                             <button opaque="NO" contentMode="scaleToFill" misplaced="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Adp-5V-orj">
@@ -1891,7 +1896,7 @@
                                 </constraints>
                                 <state key="normal" image="icon-add-finish"/>
                                 <connections>
-                                    <action selector="publicarDelito:" destination="YsB-mQ-bmU" eventType="touchUpInside" id="i8A-z0-RPT"/>
+                                    <action selector="publicarDelitoWithSender:" destination="YsB-mQ-bmU" eventType="touchUpInside" id="PYN-6S-M1P"/>
                                 </connections>
                             </button>
                             <view contentMode="scaleToFill" misplaced="YES" translatesAutoresizingMaskIntoConstraints="NO" id="9eq-60-2IS" userLabel="View botones delincuente">
@@ -1905,7 +1910,7 @@
                                         </constraints>
                                         <state key="normal" image="ic_minus_circle_outline_grey600_36dp"/>
                                         <connections>
-                                            <action selector="minDelincuentesAction:" destination="YsB-mQ-bmU" eventType="touchUpInside" id="Z5K-rk-KcS"/>
+                                            <action selector="minDelincuentesActionWithSender:" destination="YsB-mQ-bmU" eventType="touchUpInside" id="Pmz-4l-a6f"/>
                                         </connections>
                                     </button>
                                     <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="icon-add-criminals" translatesAutoresizingMaskIntoConstraints="NO" id="5Jn-fg-6P9">
@@ -1928,7 +1933,7 @@
                                             <color key="titleShadowColor" red="0.97647058819999999" green="0.40000000000000002" blue="0.20000000000000001" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                         </state>
                                         <connections>
-                                            <action selector="addDelincuentesAction:" destination="YsB-mQ-bmU" eventType="touchUpInside" id="fAN-dz-Kat"/>
+                                            <action selector="addDelincuentesActionWithSender:" destination="YsB-mQ-bmU" eventType="touchUpInside" id="SRm-jg-O6S"/>
                                         </connections>
                                     </button>
                                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="0" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="0dw-qE-FMB">
@@ -1966,7 +1971,7 @@
                                         </constraints>
                                         <state key="normal" image="ic_plus_circle_outline_grey600_36dp"/>
                                         <connections>
-                                            <action selector="addVictimasAction:" destination="YsB-mQ-bmU" eventType="touchUpInside" id="Vf7-lt-E84"/>
+                                            <action selector="addVictimasActionWithSender:" destination="YsB-mQ-bmU" eventType="touchUpInside" id="lAO-l6-THc"/>
                                         </connections>
                                     </button>
                                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="zbJ-Pc-atC">
@@ -1977,7 +1982,7 @@
                                         </constraints>
                                         <state key="normal" image="ic_minus_circle_outline_grey600_36dp"/>
                                         <connections>
-                                            <action selector="minVictimasAction:" destination="YsB-mQ-bmU" eventType="touchUpInside" id="cIX-GP-ocq"/>
+                                            <action selector="minVictimasActionWithSender:" destination="YsB-mQ-bmU" eventType="touchUpInside" id="dVP-fG-2jH"/>
                                         </connections>
                                     </button>
                                     <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="icon-add-victims" translatesAutoresizingMaskIntoConstraints="NO" id="PIH-m8-gIL">
@@ -2040,7 +2045,7 @@
                                             </userDefinedRuntimeAttribute>
                                         </userDefinedRuntimeAttributes>
                                         <connections>
-                                            <action selector="aceptarDateAction:" destination="YsB-mQ-bmU" eventType="touchUpInside" id="a6l-jc-Kzg"/>
+                                            <action selector="aceptarDateActionWithSender:" destination="YsB-mQ-bmU" eventType="touchUpInside" id="SIg-kd-eNr"/>
                                         </connections>
                                     </button>
                                     <datePicker contentMode="scaleToFill" ambiguous="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" datePickerMode="dateAndTime" minuteInterval="1" translatesAutoresizingMaskIntoConstraints="NO" id="M05-kh-Vnd">
@@ -2097,14 +2102,14 @@
                         <outlet property="dateView" destination="IeE-DS-cUP" id="T9l-cn-UIj"/>
                         <outlet property="txtDate" destination="7X8-qp-H9S" id="42t-eD-p9E"/>
                         <outlet property="txtDelincuentes" destination="0dw-qE-FMB" id="49m-hY-OGJ"/>
-                        <outlet property="txtDescripcion" destination="pKd-qY-A21" id="JHs-ZG-atC"/>
+                        <outlet property="txtDescripcion" destination="pKd-qY-A21" id="x7E-Lm-h39"/>
                         <outlet property="txtVictimas" destination="urU-hL-FA0" id="zmv-Ez-8fz"/>
                         <segue destination="BYZ-38-t0r" kind="show" identifier="reportarDelito2Home" id="wo9-jP-8Nh"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="CDV-xi-mvx" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="4574" y="1180"/>
+            <point key="canvasLocation" x="4809" y="1180"/>
         </scene>
         <!--Seleccionar fotografias-->
         <scene sceneID="yR0-Vs-xl2">
@@ -2192,7 +2197,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="lv6-0X-Ic8" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="5481" y="1180"/>
+            <point key="canvasLocation" x="5784" y="1180"/>
         </scene>
     </scenes>
     <resources>
@@ -2227,7 +2232,8 @@
         <image name="slide1" width="352" height="628"/>
     </resources>
     <inferredMetricsTieBreakers>
+        <segue reference="kPs-C5-mvv"/>
         <segue reference="h9G-1l-H9c"/>
-        <segue reference="j0A-Zw-q7o"/>
+        <segue reference="wo9-jP-8Nh"/>
     </inferredMetricsTieBreakers>
 </document>

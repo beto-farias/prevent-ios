@@ -12,7 +12,7 @@ class WizardTipoDelitoViewController: UIViewController,UICollectionViewDelegate,
 
     @IBOutlet var collectionView: UICollectionView!
     
-    let idDelitosList = [1,2,4,5,6,7,8,10,11,12]
+    let idDelitosList = [1,2,4,5,6,7,8,11,12]
     
     let delitosList:[String] = [
         Controller.getDelitoStrByType(tipo: 1),
@@ -24,7 +24,7 @@ class WizardTipoDelitoViewController: UIViewController,UICollectionViewDelegate,
         Controller.getDelitoStrByType(tipo: 7),
         Controller.getDelitoStrByType(tipo: 8),
        // Controller.getDelitoStrByType(9),
-        Controller.getDelitoStrByType(tipo: 10),
+        //Controller.getDelitoStrByType(tipo: 10),
         Controller.getDelitoStrByType(tipo: 11),
         Controller.getDelitoStrByType(tipo: 12)
     ]
@@ -39,7 +39,7 @@ class WizardTipoDelitoViewController: UIViewController,UICollectionViewDelegate,
         Controller.getDelitoIco(tipo: 7),
         Controller.getDelitoIco(tipo: 8),
         //Controller.getDelitoIco(9),
-        Controller.getDelitoIco(tipo: 10),
+        //Controller.getDelitoIco(tipo: 10),
         Controller.getDelitoIco(tipo: 11),
         Controller.getDelitoIco(tipo: 12)
     ]
@@ -83,8 +83,11 @@ class WizardTipoDelitoViewController: UIViewController,UICollectionViewDelegate,
         return cell
     }
     
-    //boton de seleccionar un delito
-    func collectionView(_ collectionView: UICollectionView, didDeselectItemAt indexPath: IndexPath) {
+    
+    
+    
+
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         //Index path seleccionado
         print("Elemento seleccionado \(indexPath.row)")
         
@@ -94,8 +97,5 @@ class WizardTipoDelitoViewController: UIViewController,UICollectionViewDelegate,
         let vc : AnyObject! = self.storyboard!.instantiateViewController(withIdentifier: "WizardReportarBase")
         self.show(vc as! UIViewController, sender: vc)
     }
-    
-    
-
 
 }
