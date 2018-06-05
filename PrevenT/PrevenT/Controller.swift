@@ -769,9 +769,9 @@ class Controller{
     
     func registrarDispositivo(idDevice:String){
         
-        //print("============== REGISTRANDO DEVICE ======================")
+        print("============== REGISTRANDO DEVICE ======================")
         let url = "\(END_POINT)\(END_POINT_REGISTER_DEVICE)";
-        //print(url);
+        print(url);
         
         let params = ["regId":idDevice,"tipoDispositivo":"IOS","version":"1.0" ]
         
@@ -780,7 +780,7 @@ class Controller{
         //Llamada a crear usuario con callback
         net.doPostJsonSyncParams(url: url, params: params);
         
-        //print("============== TERMINA REGISTRANDO DEVICE ======================")
+        print("============== TERMINA REGISTRANDO DEVICE ======================")
     }
     
 }

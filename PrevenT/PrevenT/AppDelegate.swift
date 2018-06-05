@@ -131,6 +131,10 @@ class AppDelegate: UIResponder, UIApplicationDelegate ,UNUserNotificationCenterD
         let refreshToken = InstanceID.instanceID().token()!;
         print("*** \(refreshToken) ****");
         
+        let controller:Controller = Controller();
+        controller.registrarDispositivo(idDevice: refreshToken);
+        
+        
         FBHandler();
     }
     
