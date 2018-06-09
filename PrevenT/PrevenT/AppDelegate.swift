@@ -54,6 +54,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate ,UNUserNotificationCenterD
         
         FirebaseApp.configure()
         
+        
         if #available(iOS 10.0, *) {
             UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .badge, .sound]) { (success, error) in
                 if error == nil {
@@ -115,7 +116,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate ,UNUserNotificationCenterD
     }
     
     func applicationDidEnterBackground(_ application: UIApplication) {
-        Messaging.messaging().shouldEstablishDirectChannel = false;
+        //Messaging.messaging().shouldEstablishDirectChannel = false;
     }
     
     func applicationWillEnterForeground(_ application: UIApplication) {}
